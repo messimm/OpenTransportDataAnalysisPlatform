@@ -1,0 +1,37 @@
+{
+  "DataLoaders":[{
+    "Name": "MobileOperatorsLoader",
+    "Parameters":{
+      "data_path":"E:\\CDR\\03_Matrix_1_201705.csv",
+      "labels":"E:\\CDR\\labels.csv"
+    } 
+  }],
+  "DataCheckers":[{
+    "Name":"MobileOperatorChecker",
+    "Parameters":{}
+  }],
+  "DataAnalyzers":[{
+    "Name":"MetroUsageDataAnalysis",
+    "Parameters":
+    {
+      "threshold":1
+    }
+  }],
+  "DataVisualizers":
+  [
+    {
+      "Name": "DataFrameToExcelVisualizer",
+      "Parameters":
+      {
+        "path_to_save":"E:\\CDR\\pattern_metro_usage_report.xlsx"
+      }
+    },
+    {
+      "Name":"TextReportMetroUsageVisualizer",
+      "Parameters":{
+        "pattern":"E:\\CDR\\pattern_metro_usage.txt",
+        "path_to_save":"E:\\CDR\\pattern_metro_usage_report.txt"
+      }
+    }
+  ]
+}
