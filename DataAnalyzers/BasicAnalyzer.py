@@ -1,3 +1,3 @@
-class BasicDataAnalysisModule():
-	def analyze(data):
-		return data
+class BasicDataAnalysisModule:
+    def analyze(self, data_loader, data_checker):
+        raise NotImplementedError

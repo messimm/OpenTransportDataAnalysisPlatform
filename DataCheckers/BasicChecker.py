@@ -1,5 +1,6 @@
-class BasicChecker():
-	def check(data):
-		return True
-	def checkFilter(data):
-		return data
+class BasicChecker:
+    def check(self, data):
+        return True
+
+    def checkFilter(self, data):
+        return data
