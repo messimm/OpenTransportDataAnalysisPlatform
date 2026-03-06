@@ -1,34 +1,50 @@
+import numpy as np
+import pandas as pd
+
+from .BasicLoader import BasicDataLoaderModule
+
+
 class MetroDataLoader(BasicDataLoaderModule):
-	def __init__(self, cfg):
-		self.data_frame = pd.read_csv(cfg["data_path"], nrows=50000000, sep=";", names=["ts","id_vest","id_val","number_ticket","number_crystal","type_ticket","type_pass","trip_num","trips"])
-		self.centers = np.unique(self.data_frame["id_vest"])
-		self.center_labels = pd.read_csv(cfg["labels"], sep=";", encoding="utf-8")
-	def labelCenter(self, center):
-		return self.center_labels[self.center_labels["PL_ID"]==center]
+    def __init__(self, cfg):
+        self.data_frame = pd.read_csv(
+            cfg["data_path"],
+            nrows=50000000,
+            sep=";",
+            names=[
+                "ts",
+                "id_vest",
+                "id_val",
+                "number_ticket",
+                "number_crystal",
+                "type_ticket",
+                "type_pass",
+                "trip_num",
+                "trips",
+            ],
+        )
+        self.centers = np.unique(self.data_frame["id_vest"])
+        self.center_labels = pd.read_csv(cfg["labels"], sep=";", encoding="utf-8")
 
-	def getAllData(self, data):
-		if data is None:
-			return self.data_frame
-		else:
-			return data
+    def labelCenter(self, center):
+        return self.center_labels[self.center_labels["PL_ID"] == center]
 
-	def getDataByColumnValue(self, data, column_name, value):
-		if data is None:
-			return self.data_frame[self.data_frame[column_name]==value]
-		else:
-			return data[data[column_name]==value]
+    def getAllData(self, data):
+        return self.data_frame if data is None else data
 
-	def getDataByColumnRange(self, data, column_name, low, high):
-		if data == None:
-			return self.data_frame[(self.data_frame[column_name]>low) & (self.data_frame[column_name]<high)]
-		else:
-			return data[(data[column_name]>low) & (data[column_name]<high)]
+    def getDataByColumnValue(self, data, column_name, value):
+        source = self.data_frame if data is None else data
+        return source[source[column_name] == value]
 
-	def getDataByColumnSet(self, data, column_name, values):
-		if data == None:
-			return self.data_frame[self.data_frame[column_name].isin(values)]
-		else:
-			return data[data[column_name].isin(values)]
-	def getDataByTimeRange(self, data, t1, t2):
-		data['time']=pd.to_datetime(data['ts']).dt.time
-		return data[np.logical_and(data["time"] > t1, data["time"] < t2)]
+    def getDataByColumnRange(self, data, column_name, low, high):
+        source = self.data_frame if data is None else data
+        return source[(source[column_name] > low) & (source[column_name] < high)]
+
+    def getDataByColumnSet(self, data, column_name, values):
+        source = self.data_frame if data is None else data
+        return source[source[column_name].isin(values)]
+
+    def getDataByTimeRange(self, data, t1, t2):
+        source = self.data_frame if data is None else data
+        source = source.copy()
+        source["time"] = pd.to_datetime(source["ts"]).dt.time
+        return source[np.logical_and(source["time"] > t1, source["time"] < t2)]
