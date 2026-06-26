@@ -4,6 +4,17 @@
 
 **OpenTransportDataPlatform** is a modular open-source software platform designed for the analysis of transportation data. The platform implements an architectural approach focused on component reuse and rapid prototyping of analytical solutions. The project emphasizes solving practical problems in urban mobility, intelligent transportation planning, and large-scale traffic analysis.
 
+
+## Исследовательский статус и некоммерческое использование / Research and non-commercial use
+
+Проект основан на материалах диссертационной работы Марка Валерьевича Булыгина, опубликованных на странице МФТИ: [mipt.ru/institute/departments/dissertatio/soiskateli/tn/bulygin-mark-valerevich](https://mipt.ru/institute/departments/dissertatio/soiskateli/tn/bulygin-mark-valerevich). Платформа и примеры предназначены для некоммерческого использования и выполняются в исследовательских целях.
+
+Если какой-либо набор данных, пример, ссылка или описание должны быть удалены из репозитория, напишите на почту проекта: `messimm@yandex.ru`.
+
+The project is based on dissertation materials by Mark Valerievich Bulygin published on the MIPT website. The platform and examples are intended for non-commercial research use. If any dataset, example, link or description should be removed from the repository, please contact `messimm@yandex.ru`.
+
+---
+
 ## Основные возможности / Key Features:
 
 - Унифицированная модель представления транспортных данных различных типов (GPS-треки, данные валидаторов, сетевые графы и др.)
@@ -52,6 +63,7 @@ The platform is designed for researchers, engineers, and professionals in transp
 - Обнаружение аномалий в транспортных потоках
 - Выявление подозрительных транзакций в системе оплаты проезда
 - Логистическая оптимизация размещения транспортных хабов
+- Оценка обеспеченности районов парковками, пунктами велопроката и другими транспортными объектами с учётом населения
 
 ---
 
@@ -59,6 +71,7 @@ The platform is designed for researchers, engineers, and professionals in transp
 - Anomaly detection in transportation flows
 - Fraud detection in fare collection systems
 - Logistic optimization for transport hub placement
+- District provision analysis for parking, bike rental and other transport objects using population data
 
 
 **License:** MIT

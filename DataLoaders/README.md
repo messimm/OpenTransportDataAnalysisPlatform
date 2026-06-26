@@ -49,7 +49,6 @@
 
 ### Пример конфигурации pipeline
 
-Готовый пример находится в `Configs/DataMosStreetParking.json` и запускает набор платных парковок через геопроверку, сводный анализатор и Excel-визуализатор:
 
 ```bash
 python launch_from_cfg.py Configs/DataMosStreetParking.json
@@ -85,9 +84,8 @@ python launch_from_cfg.py Configs/DataMosStreetParking.json
 
 - `GenericDatasetSummaryAnalysis` для сводки строк, колонок, координат и совместимости;
 - фильтрами загрузчиков `getDataByColumnValue`, `getDataByColumnRange`, `getDataByColumnSet`;
-- визуализаторами/экспортом, которые принимают `DataFrame`, например `DataFrameToExcelVisualizer`;
-- геоаналитическими сценариями, если используются нормализованные поля `latitude` и `longitude`.
+и используются нормализованные поля `latitude` и `longitude`.
 
 Они не являются прямой заменой временных рядов пассажиропотока. Для `AnomalyDetection`, `PotentialFraudAnalysis` и `HoodTypeAnalysis` обычно нужны данные с временными метками, поездками, валидаторами или потоками по зонам. Наборы `data.mos.ru` можно использовать вместе с такими анализаторами после объединения со счетчиками спроса, транзакциями или мобильными агрегатами.
 
-Дополнительная краткая справка по этим наборам также доступна в `DataLoaders/DATAMOS.md`.
+

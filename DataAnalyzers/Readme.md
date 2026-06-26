@@ -6,3 +6,5 @@
 | `AnomalyDetector.py`    | Детекция аномалий в транспортных потоках                          | Detection of anomalies in transportation flows               |
 | `HoodTypeAnalyzer.py`   | Кластеризация районов по типам транспортного поведения            | Clustering of urban areas by transportation usage patterns   |
 | `FraudAnalyzer.py`      | Поиск потенциальных случаев мошенничества в транспортных системах | Detection of potential fraud cases in transportation systems |
+| `GenericDatasetSummaryAnalyzer.py` | Сводная проверка статических наборов данных и совместимости с фильтрами | Summary check for static datasets and filter compatibility |
+| `DistrictProvisionAnalyzer.py` | Оценка обеспеченности районов транспортными объектами на основе населения | District provision analysis for transport objects using population data |
