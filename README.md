@@ -72,6 +72,20 @@ The platform is designed for researchers, engineers, and professionals in transp
 
 ---
 
+
+## Быстрый запуск примеров / Quick start examples
+
+```bash
+python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
+python launch_from_cfg.py Configs/DataMosBikeRentalDistrictProvision.json
+python launch_from_cfg.py Configs/DataMosTaxiParkingDistrictProvision.json
+python launch_from_cfg.py Configs/DataMosTransitStopsDistrictProvision.json
+```
+
+Эти команды используют примерные fixture-данные из `tests/fixtures/` и формируют CSV-сводки, TOP/BOTTOM-отчёты и PNG-карты. Для работы с актуальными выгрузками замените `data_path` в конфиге на локальный CSV/JSON-файл или настройте доступ к API `data.mos.ru`.
+
+---
+
 ## Примеры использования / Example Use Cases:
 
 - Кластеризация городских районов по паттернам передвижения
