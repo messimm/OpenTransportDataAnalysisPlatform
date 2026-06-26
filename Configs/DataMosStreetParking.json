@@ -1,0 +1,6 @@
+{
+  "DataLoaders": [{"Name": "MoscowStreetParkingLoader", "Parameters": {"rows_limit": 1000}}],
+  "DataCheckers": [{"Name": "DataMosGeoChecker", "Parameters": {"require_coordinates": true}}],
+  "DataAnalyzers": [{"Name": "GenericDatasetSummaryAnalysis", "Parameters": {"group_column": "capacity"}}],
+  "DataVisualizers": [{"Name": "DataFrameToExcelVisualizer", "Parameters": {"path_to_save": "street_parking_summary.xlsx"}}]
+}
