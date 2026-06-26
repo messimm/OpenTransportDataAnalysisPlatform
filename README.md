@@ -28,6 +28,24 @@
 
 The platform is designed for researchers, engineers, and professionals in transportation analytics who need a tool for building, testing, and deploying analytical solutions with minimal software development overhead.
 
+
+## Поддерживаемые источники данных / Supported Data Sources
+
+Платформа поддерживает подключение локальных файлов и внешних открытых источников через модульные загрузчики данных. Для московских открытых транспортных данных добавлены адаптеры `data.mos.ru`, которые можно использовать как через API портала, так и через локальный CSV/JSON-кэш, если прямой сетевой доступ ограничен.
+
+### Наборы `data.mos.ru` / `data.mos.ru` datasets
+
+| Набор данных | Адаптер | Назначение в платформе |
+| --- | --- | --- |
+| [Платные парковки на улично-дорожной сети, dataset 623](https://data.mos.ru/opendata/623) | `MoscowStreetParkingLoader` | Статический геореестр парковок, анализ ёмкости, фильтрация и экспорт |
+| [Парковки такси, dataset 621](https://data.mos.ru/opendata/621) | `MoscowTaxiParkingLoader` | Геореестр стоянок такси, проверка покрытия и пространственная фильтрация |
+| [Прокат велосипедов, dataset 1777](https://data.mos.ru/opendata/1777) | `MoscowBikeRentalLoader` | Реестр пунктов велопроката, геоанализ и фильтрация объектов |
+| [Маршруты и остановки наземного городского пассажирского транспорта, dataset 60661](https://data.mos.ru/opendata/60661) | `MoscowTransitStopsRoutesLoader` | Справочные данные по маршрутам/остановкам для маршрутизационных и справочных сценариев |
+
+Подробная документация по параметрам загрузчиков, примеру конфигурации и совместимости с анализаторами находится в [`DataLoaders/README.md`](DataLoaders/README.md) и [`DataLoaders/DATAMOS.md`](DataLoaders/DATAMOS.md).
+
+---
+
 ## Примеры использования / Example Use Cases:
 
 - Кластеризация городских районов по паттернам передвижения
