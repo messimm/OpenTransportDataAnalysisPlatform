@@ -57,35 +57,6 @@ The platform is designed for researchers, engineers, and professionals in transp
 
 ---
 
-
-## Решённые задачи и визуализации / Solved cases and visualizations
-
-| Кейc / Case | Конфиг / Config | Визуализации и отчёты / Visualizations and reports | Документация / Docs |
-| --- | --- | --- | --- |
-| Обеспеченность районов платными парковками | `Configs/DataMosStreetParkingDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание кейса](docs/SOLVED_TASKS.md#обеспеченность-районов-платными-парковками) |
-| Обеспеченность районов пунктами велопроката | `Configs/DataMosBikeRentalDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание кейса](docs/SOLVED_TASKS.md#обеспеченность-районов-пунктами-велопроката) |
-| Обеспеченность районов стоянками такси | `Configs/DataMosTaxiParkingDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание кейса](docs/SOLVED_TASKS.md#обеспеченность-районов-стоянками-такси) |
-| Обеспеченность районов остановками/маршрутами НГПТ | `Configs/DataMosTransitStopsDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание кейса](docs/SOLVED_TASKS.md#обеспеченность-районов-остановками-и-маршрутными-записями-нгпт) |
-| Сводная проверка набора платных парковок | `Configs/DataMosStreetParking.json` | Табличная проверка качества и совместимости | [описание кейса](docs/SOLVED_TASKS.md#сводная-проверка-набора-платных-парковок) |
-
-Полная страница с решёнными задачами, ожидаемыми файлами результатов и ссылками на документацию: [`docs/SOLVED_TASKS.md`](docs/SOLVED_TASKS.md). Документация по загрузчикам `data.mos.ru` вынесена в [`DataLoaders/README.md`](DataLoaders/README.md) и [`DataLoaders/DATAMOS.md`](DataLoaders/DATAMOS.md).
-
----
-
-
-## Быстрый запуск примеров / Quick start examples
-
-```bash
-python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
-python launch_from_cfg.py Configs/DataMosBikeRentalDistrictProvision.json
-python launch_from_cfg.py Configs/DataMosTaxiParkingDistrictProvision.json
-python launch_from_cfg.py Configs/DataMosTransitStopsDistrictProvision.json
-```
-
-Эти команды используют примерные fixture-данные из `tests/fixtures/` и формируют CSV-сводки, TOP/BOTTOM-отчёты и PNG-карты. Для работы с актуальными выгрузками замените `data_path` в конфиге на локальный CSV/JSON-файл или настройте доступ к API `data.mos.ru`.
-
----
-
 ## Примеры использования / Example Use Cases:
 
 - Кластеризация городских районов по паттернам передвижения

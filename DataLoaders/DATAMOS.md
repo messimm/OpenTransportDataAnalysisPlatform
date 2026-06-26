@@ -1,10 +1,8 @@
-# Адаптеры транспортных наборов `data.mos.ru`
-
 Реализованы адаптеры для основных московских открытых транспортных наборов данных:
 
 | Адаптер | Dataset | Ссылка `data.mos.ru` | Типовая совместимость с анализом |
 | --- | --- | --- | --- |
-| `MoscowStreetParkingLoader` | 623, платные парковки на УДС | https://data.mos.ru/opendata/623 | Статический геореестр, сводки по ёмкости, фильтрация, CSV/Excel-экспорт |
+
 | `MoscowTaxiParkingLoader` | 621, парковки такси | https://data.mos.ru/opendata/621 | Статический геореестр, фильтрация, предварительная оценка покрытия |
 | `MoscowBikeRentalLoader` | 1777, пункты велопроката | https://data.mos.ru/opendata/1777 | Статический геореестр, фильтрация, разделение сетевых/несетевых объектов при наличии поля |
 | `MoscowTransitStopsRoutesLoader` | 60661, маршруты и остановки НГПТ | https://data.mos.ru/opendata/60661 | Справочный анализ маршрутов/остановок; не является временным рядом пассажиропотока |
@@ -29,7 +27,7 @@ Adapters have been implemented for the main Moscow open transport datasets:
 
 | Adapter | Dataset | `data.mos.ru` URL | Typical analysis compatibility |
 | --- | --- | --- | --- |
-| `MoscowStreetParkingLoader` | 623, paid street parking | https://data.mos.ru/opendata/623 | Static geospatial inventory, capacity summaries, filtering, CSV/Excel export |
+
 | `MoscowTaxiParkingLoader` | 621, taxi parking | https://data.mos.ru/opendata/621 | Static geospatial inventory, filtering, coverage previews |
 | `MoscowBikeRentalLoader` | 1777, bicycle rental points | https://data.mos.ru/opendata/1777 | Static geospatial inventory, filtering, network/non-network split if the field is available |
 | `MoscowTransitStopsRoutesLoader` | 60661, public transport routes/stops schedules | https://data.mos.ru/opendata/60661 | Route/stop reference analysis and filtering; not a passenger-flow time series |
@@ -45,22 +43,3 @@ If the public API is unavailable in the execution environment, pass `data_path`
 with a cached CSV or JSON export from the dataset page. The loader reads local
 caches first and only calls the API when no local cache is provided.
 
-## Дополнительные источники для обеспеченности районов
-
-Помимо парковок и велопроката, задачи обеспеченности районов могут использовать:
-
-- `MoscowTaxiParkingLoader` (`dataset 621`) — обеспеченность стоянками такси;
-- `MoscowTransitStopsRoutesLoader` (`dataset 60661`) — обеспеченность записями остановок/маршрутов наземного транспорта.
-
-Для корректного районного расчёта объектные выгрузки должны содержать поле района или должны быть предварительно обогащены районом по координатам. В примерах это поле нормализуется через `columns_map`: `"District": "district"`.
-
----
-
-## Additional sources for district provision
-
-In addition to parking and bike rental datasets, district provision workflows can use:
-
-- `MoscowTaxiParkingLoader` (`dataset 621`) — taxi parking provision;
-- `MoscowTransitStopsRoutesLoader` (`dataset 60661`) — surface transport stop/route record provision.
-
-For correct district-level calculations, object exports must contain a district field or be enriched with districts by coordinates beforehand. The examples normalize this field through `columns_map`: `"District": "district"`.
