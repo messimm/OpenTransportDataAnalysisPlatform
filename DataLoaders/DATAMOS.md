@@ -1,10 +1,10 @@
-# Адаптеры transport-наборов `data.mos.ru`
+# Адаптеры транспортных наборов `data.mos.ru`
 
 Реализованы адаптеры для основных московских открытых транспортных наборов данных:
 
 | Адаптер | Dataset | Ссылка `data.mos.ru` | Типовая совместимость с анализом |
 | --- | --- | --- | --- |
-| `MoscowStreetParkingLoader` | 623, платные парковки на УДС | https://data.mos.ru/opendata/623 | Статический геореестр, сводки по ёмкости, фильтрация, Excel-экспорт |
+| `MoscowStreetParkingLoader` | 623, платные парковки на УДС | https://data.mos.ru/opendata/623 | Статический геореестр, сводки по ёмкости, фильтрация, CSV/Excel-экспорт |
 | `MoscowTaxiParkingLoader` | 621, парковки такси | https://data.mos.ru/opendata/621 | Статический геореестр, фильтрация, предварительная оценка покрытия |
 | `MoscowBikeRentalLoader` | 1777, пункты велопроката | https://data.mos.ru/opendata/1777 | Статический геореестр, фильтрация, разделение сетевых/несетевых объектов при наличии поля |
 | `MoscowTransitStopsRoutesLoader` | 60661, маршруты и остановки НГПТ | https://data.mos.ru/opendata/60661 | Справочный анализ маршрутов/остановок; не является временным рядом пассажиропотока |
@@ -29,7 +29,7 @@ Adapters have been implemented for the main Moscow open transport datasets:
 
 | Adapter | Dataset | `data.mos.ru` URL | Typical analysis compatibility |
 | --- | --- | --- | --- |
-| `MoscowStreetParkingLoader` | 623, paid street parking | https://data.mos.ru/opendata/623 | Static geospatial inventory, capacity summaries, filtering, Excel export |
+| `MoscowStreetParkingLoader` | 623, paid street parking | https://data.mos.ru/opendata/623 | Static geospatial inventory, capacity summaries, filtering, CSV/Excel export |
 | `MoscowTaxiParkingLoader` | 621, taxi parking | https://data.mos.ru/opendata/621 | Static geospatial inventory, filtering, coverage previews |
 | `MoscowBikeRentalLoader` | 1777, bicycle rental points | https://data.mos.ru/opendata/1777 | Static geospatial inventory, filtering, network/non-network split if the field is available |
 | `MoscowTransitStopsRoutesLoader` | 60661, public transport routes/stops schedules | https://data.mos.ru/opendata/60661 | Route/stop reference analysis and filtering; not a passenger-flow time series |

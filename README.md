@@ -68,7 +68,7 @@ The platform is designed for researchers, engineers, and professionals in transp
 | Обеспеченность районов остановками/маршрутами НГПТ | `Configs/DataMosTransitStopsDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание кейса](docs/SOLVED_TASKS.md#обеспеченность-районов-остановками-и-маршрутными-записями-нгпт) |
 | Сводная проверка набора платных парковок | `Configs/DataMosStreetParking.json` | Табличная проверка качества и совместимости | [описание кейса](docs/SOLVED_TASKS.md#сводная-проверка-набора-платных-парковок) |
 
-Полная страница с решёнными задачами, ожидаемыми файлами результатов и ссылками на документацию: [`docs/SOLVED_TASKS.md`](docs/SOLVED_TASKS.md).
+Полная страница с решёнными задачами, ожидаемыми файлами результатов и ссылками на документацию: [`docs/SOLVED_TASKS.md`](docs/SOLVED_TASKS.md). Документация по загрузчикам `data.mos.ru` вынесена в [`DataLoaders/README.md`](DataLoaders/README.md) и [`DataLoaders/DATAMOS.md`](DataLoaders/DATAMOS.md).
 
 ---
 
