@@ -51,6 +51,11 @@ python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
 - `outputs/street_parking_district_provision_top10_top.csv` — самые обеспеченные районы;
 - `outputs/street_parking_district_provision_top10_bottom.csv` — наименее обеспеченные районы;
 - `outputs/street_parking_district_provision_map.png` — PNG-карта объектов.
+- `street_parking_district_provision_summary.csv` — районная сводка;
+- `street_parking_district_provision_top10_report.txt` — текстовый TOP/BOTTOM-10;
+- `street_parking_district_provision_top10_top.csv` — самые обеспеченные районы;
+- `street_parking_district_provision_top10_bottom.csv` — наименее обеспеченные районы;
+- `street_parking_district_provision_map.png` — PNG-карта объектов.
 
 ## Обеспеченность районов пунктами велопроката
 
@@ -71,6 +76,11 @@ python launch_from_cfg.py Configs/DataMosBikeRentalDistrictProvision.json
 - `outputs/bike_rental_district_provision_top10_top.csv`;
 - `outputs/bike_rental_district_provision_top10_bottom.csv`;
 - `outputs/bike_rental_district_provision_map.png`.
+- `bike_rental_district_provision_summary.csv`;
+- `bike_rental_district_provision_top10_report.txt`;
+- `bike_rental_district_provision_top10_top.csv`;
+- `bike_rental_district_provision_top10_bottom.csv`;
+- `bike_rental_district_provision_map.png`.
 
 ## Обеспеченность районов стоянками такси
 
@@ -91,6 +101,11 @@ python launch_from_cfg.py Configs/DataMosTaxiParkingDistrictProvision.json
 - `outputs/taxi_parking_district_provision_top10_top.csv`;
 - `outputs/taxi_parking_district_provision_top10_bottom.csv`;
 - `outputs/taxi_parking_district_provision_map.png`.
+- `taxi_parking_district_provision_summary.csv`;
+- `taxi_parking_district_provision_top10_report.txt`;
+- `taxi_parking_district_provision_top10_top.csv`;
+- `taxi_parking_district_provision_top10_bottom.csv`;
+- `taxi_parking_district_provision_map.png`.
 
 ## Обеспеченность районов остановками и маршрутными записями НГПТ
 
@@ -113,6 +128,11 @@ python launch_from_cfg.py Configs/DataMosTransitStopsDistrictProvision.json
 - `outputs/transit_stops_district_provision_top10_top.csv`;
 - `outputs/transit_stops_district_provision_top10_bottom.csv`;
 - `outputs/transit_stops_district_provision_map.png`.
+- `transit_stops_district_provision_summary.csv`;
+- `transit_stops_district_provision_top10_report.txt`;
+- `transit_stops_district_provision_top10_top.csv`;
+- `transit_stops_district_provision_top10_bottom.csv`;
+- `transit_stops_district_provision_map.png`.
 
 ## Сводная проверка набора платных парковок
 

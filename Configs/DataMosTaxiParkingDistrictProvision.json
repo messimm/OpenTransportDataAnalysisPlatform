@@ -71,20 +71,20 @@
     {
       "Name": "DataFrameToCsvVisualizer",
       "Parameters": {
-        "path_to_save": "outputs/taxi_parking_district_provision_summary.csv"
+        "path_to_save": "taxi_parking_district_provision_summary.csv"
       }
     },
     {
       "Name": "DistrictProvisionTopReportVisualizer",
       "Parameters": {
-        "path_to_save": "outputs/taxi_parking_district_provision_top10_report.txt",
-        "csv_prefix": "outputs/taxi_parking_district_provision_top10"
+        "path_to_save": "taxi_parking_district_provision_top10_report.txt",
+        "csv_prefix": "taxi_parking_district_provision_top10"
       }
     },
     {
       "Name": "DistrictProvisionMapVisualizer",
       "Parameters": {
-        "path_to_save": "outputs/taxi_parking_district_provision_map.png",
+        "path_to_save": "taxi_parking_district_provision_map.png",
         "title": "Taxi parking provision by district"
       }
     }

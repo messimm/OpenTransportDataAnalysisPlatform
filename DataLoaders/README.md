@@ -55,6 +55,7 @@
 fixture набора платных парковок через геопроверку, сводный анализатор и CSV-визуализатор.
 Результат сохраняется в `outputs/street_parking_summary.csv`. Для расширенных задач
 обеспеченности используются CSV-отчёты и PNG-карты:
+Готовый пример находится в `Configs/DataMosStreetParking.json` и запускает набор платных парковок через геопроверку, сводный анализатор и табличный визуализатор. Для расширенных задач обеспеченности используются CSV-отчёты и PNG-карты:
 
 ```bash
 python launch_from_cfg.py Configs/DataMosStreetParking.json
@@ -67,6 +68,7 @@ python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
 ```
 
 Если окружение не имеет доступа к `apidata.mos.ru`, скачайте CSV/JSON с карточки набора данных и укажите путь в параметре `data_path`:
+Если окружение не имеет доступа к `api.data.mos.ru`, скачайте CSV/JSON с карточки набора данных и укажите путь в параметре `data_path`:
 
 ```json
 {

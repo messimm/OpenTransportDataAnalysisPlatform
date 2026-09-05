@@ -27,7 +27,6 @@ This repository is a modular research platform for transport data analysis. When
 | `DataVisualizers/` | Output writers for CSV, Excel, TXT, PNG charts/maps. |
 | `docs/SOLVED_TASKS.md` | User-facing solved cases and expected outputs. |
 | `docs/AGENT_GUIDE.md` | Agent-facing domain-to-code workflow guide. |
-| `llms.txt` | Compact machine-readable project map for AI agents. |
 | `tests/fixtures/` | Small local data examples for smoke tests and offline demos. |
 
 ## Coding rules
@@ -44,9 +43,7 @@ This repository is a modular research platform for transport data analysis. When
 
 ```bash
 python -m compileall DataLoaders DataCheckers DataAnalyzers DataVisualizers launch_from_cfg.py
-python -m unittest discover -s tests -v
 python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
-python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
 ```
 
 For docs-only changes, also check conflict markers:

@@ -72,6 +72,7 @@
       "Name": "DataFrameToCsvVisualizer",
       "Parameters": {
         "path_to_save": "outputs/transit_stops_district_provision_summary.csv"
+        "path_to_save": "transit_stops_district_provision_summary.csv"
       }
     },
     {
@@ -79,12 +80,15 @@
       "Parameters": {
         "path_to_save": "outputs/transit_stops_district_provision_top10_report.txt",
         "csv_prefix": "outputs/transit_stops_district_provision_top10"
+        "path_to_save": "transit_stops_district_provision_top10_report.txt",
+        "csv_prefix": "transit_stops_district_provision_top10"
       }
     },
     {
       "Name": "DistrictProvisionMapVisualizer",
       "Parameters": {
         "path_to_save": "outputs/transit_stops_district_provision_map.png",
+        "path_to_save": "transit_stops_district_provision_map.png",
         "title": "Transit stop/route record provision by district"
       }
     }

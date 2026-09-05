@@ -35,6 +35,7 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
     """
 
     API_URL = "https://apidata.mos.ru/v1/datasets/{dataset_id}/rows"
+    API_URL = "https://api.data.mos.ru/v1/datasets/{dataset_id}/rows"
 
     dataset_id: Optional[int] = None
     default_columns_map: Dict[str, str] = {}
@@ -65,6 +66,10 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
             with open(data_path, "r", encoding="utf-8") as f:
                 payload = json.load(f)
             return self._rows_to_frame(payload).head(self.rows_limit)
+        if data_path.endswith(".json"):
+            with open(data_path, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+            return self._rows_to_frame(payload)
         return pd.read_csv(data_path, sep=self.cfg.get("sep", ";"), nrows=self.rows_limit)
 
     def _download_from_api(self) -> pd.DataFrame:
@@ -75,6 +80,10 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
         if api_key:
             params["api_key"] = api_key
         url = self.cfg.get("api_url", self.API_URL).format(dataset_id=self.dataset_id)
+        api_key = self.cfg.get("api_key")
+        if api_key:
+            params["api_key"] = api_key
+        url = self.API_URL.format(dataset_id=self.dataset_id)
         try:
             response = requests.get(url, params=params, timeout=self.cfg.get("timeout", 20))
             response.raise_for_status()
@@ -94,6 +103,7 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
         else:
             raise ValueError("Unsupported data.mos.ru JSON payload: expected list or object")
         for row in rows:
+        for row in payload if isinstance(payload, list) else payload.get("Items", []):
             cells = row.get("Cells", row) if isinstance(row, dict) else row
             if isinstance(cells, dict):
                 records.append(cells)
@@ -176,6 +186,10 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
             )
             if api_key:
                 params["api_key"] = api_key
+            url = self.API_URL.format(dataset_id=self.dataset_id)
+            params = {"$top": 1}
+            if self.cfg.get("api_key"):
+                params["api_key"] = self.cfg["api_key"]
             response = requests.get(url, params=params, timeout=self.cfg.get("timeout", 10))
             return response.ok
         except requests.RequestException:
