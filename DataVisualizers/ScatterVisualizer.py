@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 class ScatterPlotVisualizer:
@@ -10,6 +11,8 @@ class ScatterPlotVisualizer:
         self.legend = cfg["legend"]
 
     def visualize(self, data):
+        Path(self.path_to_save).expanduser().parent.mkdir(parents=True, exist_ok=True)
+        plt.figure()
         scatter = plt.scatter(x=data["x"], y=data["y"], c=data["color"])
         plt.title(self.name)
         plt.xlabel(self.xlabel)
@@ -17,3 +20,4 @@ class ScatterPlotVisualizer:
         plt.legend(*scatter.legend_elements(), loc="lower left", title=self.legend)
         plt.plot()
         plt.savefig(self.path_to_save)
+        plt.close()

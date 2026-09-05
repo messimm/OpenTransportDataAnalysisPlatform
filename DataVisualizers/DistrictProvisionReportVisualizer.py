@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 class DistrictProvisionTopReportVisualizer:
     """Save top/bottom district provision report as text and optional CSV files."""
 
@@ -16,6 +19,7 @@ class DistrictProvisionTopReportVisualizer:
             if column in top.columns or column in bottom.columns
         ]
 
+        Path(self.path_to_save).expanduser().parent.mkdir(parents=True, exist_ok=True)
         with open(self.path_to_save, "w", encoding="utf-8") as f:
             f.write(f"Provision report for {data['object_type']}\n")
             f.write(f"Metric: {metric}\n\n")
@@ -26,5 +30,6 @@ class DistrictProvisionTopReportVisualizer:
             f.write("\n")
 
         if self.csv_prefix:
+            Path(self.csv_prefix).expanduser().parent.mkdir(parents=True, exist_ok=True)
             top[columns].to_csv(f"{self.csv_prefix}_top.csv", index=False)
             bottom[columns].to_csv(f"{self.csv_prefix}_bottom.csv", index=False)

@@ -23,6 +23,10 @@ class DistrictObjectProvisionAnalysis(BasicDataAnalysisModule):
         self.object_name = self.cfg.get("object_name", "objects")
         self.outputs = self.cfg.get("outputs")
         self.top_n = self.cfg.get("top_n", 10)
+        if self.per_population <= 0:
+            raise ValueError("per_population must be positive")
+        if self.top_n <= 0:
+            raise ValueError("top_n must be positive")
 
     def analyze(self, data_loader, data_checker):
         object_loader, population_loader = data_loader
@@ -41,6 +45,10 @@ class DistrictObjectProvisionAnalysis(BasicDataAnalysisModule):
         objects[self.object_district_column] = objects[self.object_district_column].astype(str).str.strip()
         population[self.population_district_column] = population[self.population_district_column].astype(str).str.strip()
         population[self.population_column] = pd.to_numeric(population[self.population_column], errors="coerce")
+        population = population[population[self.population_column] > 0]
+        if population.empty:
+            raise ValueError("Population data has no valid positive values")
+        population = population.groupby(self.population_district_column, as_index=False)[self.population_column].sum()
 
         grouped = objects.groupby(self.object_district_column).size().rename("object_count").to_frame()
         if self.capacity_column and self.capacity_column in objects.columns:
@@ -61,6 +69,16 @@ class DistrictObjectProvisionAnalysis(BasicDataAnalysisModule):
             result["capacity_per_population"] = result["capacity_total"] / result["population"] * self.per_population
 
         metric = self.cfg.get("level_metric", "objects_per_population")
+        if metric not in result.columns:
+            raise KeyError(f"Provision metric '{metric}' is unavailable")
+        low_threshold = self.low_threshold if self.low_threshold is not None else result[metric].quantile(0.25)
+        high_threshold = self.high_threshold if self.high_threshold is not None else result[metric].quantile(0.75)
+        if low_threshold > high_threshold:
+            raise ValueError("low_threshold cannot be greater than high_threshold")
+
+        result["provision_level"] = "medium"
+        result.loc[result[metric] <= low_threshold, "provision_level"] = "low"
+        result.loc[result[metric] >= high_threshold, "provision_level"] = "high"
         if self.low_threshold is None:
             self.low_threshold = result[metric].quantile(0.25)
         if self.high_threshold is None:
@@ -80,6 +98,9 @@ class DistrictObjectProvisionAnalysis(BasicDataAnalysisModule):
             "top_report": self._build_top_report(result, metric),
             "map_points": self._build_map_points(objects, result, metric),
         }
+        unknown_outputs = set(self.outputs) - set(output_map)
+        if unknown_outputs:
+            raise ValueError(f"Unknown analyzer outputs: {', '.join(sorted(unknown_outputs))}")
         return [output_map[name] for name in self.outputs]
 
     def _build_top_report(self, result, metric):

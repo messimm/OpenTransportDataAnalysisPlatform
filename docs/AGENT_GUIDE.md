@@ -67,6 +67,7 @@
 
 ```bash
 python -m compileall DataLoaders DataCheckers DataAnalyzers DataVisualizers launch_from_cfg.py
+python -m unittest discover -s tests -v
 ```
 
 Если менялись готовые конфиги:

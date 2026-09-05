@@ -1,0 +1,27 @@
+# OpenTransportDataPlatform
+
+OpenTransportDataPlatform is a Russian-first, modular, non-commercial research
+platform for urban transport data analysis in Python.
+
+Primary entry points:
+- README.md: installation, quick start, sources, solved cases and architecture.
+- AGENTS.md: mandatory repository instructions for coding agents.
+- docs/AGENT_GUIDE.md: mapping transport-domain requests to code modules.
+- docs/SOLVED_TASKS.md: implemented transport analysis workflows.
+- launch_from_cfg.py: config-driven pipeline runner.
+- Configs/: runnable offline and online JSON examples.
+
+Pipeline model:
+DataLoaders -> DataCheckers -> one DataAnalyzer -> DataVisualizers.
+
+Useful commands:
+- python launch_from_cfg.py --list-configs
+- python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
+- python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
+- python -m unittest discover -s tests -v
+
+Domain keywords:
+transport data analysis, urban mobility, public transport analytics, Moscow
+transport, data.mos.ru, district accessibility, transport infrastructure,
+passenger flow, mobility analytics, транспортная аналитика, городская
+мобильность, транспортные данные, обеспеченность районов, пассажиропоток.

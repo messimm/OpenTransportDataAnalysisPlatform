@@ -13,6 +13,7 @@
 | [Обеспеченность районов стоянками такси](#обеспеченность-районов-стоянками-такси) | `data.mos.ru` dataset 621 + население районов | `Configs/DataMosTaxiParkingDistrictProvision.json` | `DataLoaders/DATAMOS.md`, `DataCheckers/README.md` | CSV-сводка, TOP/BOTTOM-10 отчёт, PNG-карта объектов |
 | [Обеспеченность районов остановками и маршрутными записями НГПТ](#обеспеченность-районов-остановками-и-маршрутными-записями-нгпт) | `data.mos.ru` dataset 60661 + население районов | `Configs/DataMosTransitStopsDistrictProvision.json` | `DataLoaders/DATAMOS.md`, `DataAnalyzers/Readme.md` | CSV-сводка, TOP/BOTTOM-10 отчёт, PNG-карта объектов |
 | [Сводная проверка набора платных парковок](#сводная-проверка-набора-платных-парковок) | `data.mos.ru` dataset 623 | `Configs/DataMosStreetParking.json` | `DataAnalyzers/Readme.md` | Табличная сводка качества и совместимости |
+| [Online-проверка актуального набора парковок](#online-проверка-актуального-набора-парковок) | API `data.mos.ru`, dataset 623 | `Configs/DataMosStreetParkingOnline.json` | `DataLoaders/README.md` | Автоматическая загрузка и CSV-сводка |
 
 ## Общий исследовательский pipeline для кейсов обеспеченности
 
@@ -45,6 +46,11 @@ python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
 
 **Ожидаемые файлы результата:**
 
+- `outputs/street_parking_district_provision_summary.csv` — районная сводка;
+- `outputs/street_parking_district_provision_top10_report.txt` — текстовый TOP/BOTTOM-10;
+- `outputs/street_parking_district_provision_top10_top.csv` — самые обеспеченные районы;
+- `outputs/street_parking_district_provision_top10_bottom.csv` — наименее обеспеченные районы;
+- `outputs/street_parking_district_provision_map.png` — PNG-карта объектов.
 - `street_parking_district_provision_summary.csv` — районная сводка;
 - `street_parking_district_provision_top10_report.txt` — текстовый TOP/BOTTOM-10;
 - `street_parking_district_provision_top10_top.csv` — самые обеспеченные районы;
@@ -65,6 +71,11 @@ python launch_from_cfg.py Configs/DataMosBikeRentalDistrictProvision.json
 
 **Ожидаемые файлы результата:**
 
+- `outputs/bike_rental_district_provision_summary.csv`;
+- `outputs/bike_rental_district_provision_top10_report.txt`;
+- `outputs/bike_rental_district_provision_top10_top.csv`;
+- `outputs/bike_rental_district_provision_top10_bottom.csv`;
+- `outputs/bike_rental_district_provision_map.png`.
 - `bike_rental_district_provision_summary.csv`;
 - `bike_rental_district_provision_top10_report.txt`;
 - `bike_rental_district_provision_top10_top.csv`;
@@ -85,6 +96,11 @@ python launch_from_cfg.py Configs/DataMosTaxiParkingDistrictProvision.json
 
 **Ожидаемые файлы результата:**
 
+- `outputs/taxi_parking_district_provision_summary.csv`;
+- `outputs/taxi_parking_district_provision_top10_report.txt`;
+- `outputs/taxi_parking_district_provision_top10_top.csv`;
+- `outputs/taxi_parking_district_provision_top10_bottom.csv`;
+- `outputs/taxi_parking_district_provision_map.png`.
 - `taxi_parking_district_provision_summary.csv`;
 - `taxi_parking_district_provision_top10_report.txt`;
 - `taxi_parking_district_provision_top10_top.csv`;
@@ -107,6 +123,11 @@ python launch_from_cfg.py Configs/DataMosTransitStopsDistrictProvision.json
 
 **Ожидаемые файлы результата:**
 
+- `outputs/transit_stops_district_provision_summary.csv`;
+- `outputs/transit_stops_district_provision_top10_report.txt`;
+- `outputs/transit_stops_district_provision_top10_top.csv`;
+- `outputs/transit_stops_district_provision_top10_bottom.csv`;
+- `outputs/transit_stops_district_provision_map.png`.
 - `transit_stops_district_provision_summary.csv`;
 - `transit_stops_district_provision_top10_report.txt`;
 - `transit_stops_district_provision_top10_top.csv`;
@@ -124,6 +145,25 @@ python launch_from_cfg.py Configs/DataMosStreetParking.json
 ```
 
 **Результат:** табличная сводка `GenericDatasetSummaryAnalysis`, пригодная для экспорта и первичной проверки качества данных.
+
+## Online-проверка актуального набора парковок
+
+Этот пример предназначен для самого короткого сценария «скачать → проверить →
+сохранить» без ручной подготовки файла:
+
+```bash
+python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
+```
+
+Результат сохраняется в `outputs/online_street_parking_summary.csv`. Источник —
+официальный API `data.mos.ru`, dataset 623. Если API требует ключ:
+
+```bash
+DATA_MOS_API_KEY="ваш-ключ" python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
+```
+
+Пример зависит от доступности внешнего портала. Все районные примеры выше
+остаются офлайн-воспроизводимыми благодаря fixtures.
 
 ---
 

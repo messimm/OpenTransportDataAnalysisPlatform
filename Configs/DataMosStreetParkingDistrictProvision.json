@@ -72,12 +72,15 @@
     {
       "Name": "DataFrameToCsvVisualizer",
       "Parameters": {
+        "path_to_save": "outputs/street_parking_district_provision_summary.csv"
         "path_to_save": "street_parking_district_provision_summary.csv"
       }
     },
     {
       "Name": "DistrictProvisionTopReportVisualizer",
       "Parameters": {
+        "path_to_save": "outputs/street_parking_district_provision_top10_report.txt",
+        "csv_prefix": "outputs/street_parking_district_provision_top10"
         "path_to_save": "street_parking_district_provision_top10_report.txt",
         "csv_prefix": "street_parking_district_provision_top10"
       }
@@ -85,6 +88,7 @@
     {
       "Name": "DistrictProvisionMapVisualizer",
       "Parameters": {
+        "path_to_save": "outputs/street_parking_district_provision_map.png",
         "path_to_save": "street_parking_district_provision_map.png",
         "title": "Street parking provision by district"
       }

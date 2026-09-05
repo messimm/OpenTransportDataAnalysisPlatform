@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 class DistrictProvisionMapVisualizer:
@@ -15,6 +16,7 @@ class DistrictProvisionMapVisualizer:
         self.point_size = cfg.get("point_size", 35)
 
     def visualize(self, data):
+        Path(self.path_to_save).expanduser().parent.mkdir(parents=True, exist_ok=True)
         plt.figure(figsize=(8, 8))
         if data.empty:
             plt.title(self.title)

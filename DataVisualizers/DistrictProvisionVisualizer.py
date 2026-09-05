@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 class DistrictProvisionBarVisualizer:
@@ -14,6 +15,7 @@ class DistrictProvisionBarVisualizer:
         self.color_map = cfg.get("color_map", {"low": "#d95f02", "medium": "#7570b3", "high": "#1b9e77"})
 
     def visualize(self, data):
+        Path(self.path_to_save).expanduser().parent.mkdir(parents=True, exist_ok=True)
         plot_data = data.sort_values(self.metric, ascending=False)
         if self.top_n:
             plot_data = plot_data.head(self.top_n)

@@ -15,6 +15,9 @@ class DataMosGeoChecker(BasicChecker):
 
     def checkFilter(self, data):
         result = pd.Series(True, index=data.index)
+        if self.require_coordinates and not {"latitude", "longitude"}.issubset(data.columns):
+            raise KeyError("Coordinate columns 'latitude' and 'longitude' are required")
+        if self.require_coordinates:
         if self.require_coordinates and {"latitude", "longitude"}.issubset(data.columns):
             result &= data["latitude"].between(55.0, 56.2) & data["longitude"].between(36.5, 38.5)
         return data[result]

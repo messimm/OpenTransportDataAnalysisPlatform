@@ -33,6 +33,14 @@ class DistrictPopulationLoader(BasicDataLoaderModule):
         self.data_frame = self.data_frame.rename(
             columns={self.district_column: "district", self.population_column: "population"}
         )
+        missing = {"district", "population"} - set(self.data_frame.columns)
+        if missing:
+            raise KeyError(f"Population columns are missing: {', '.join(sorted(missing))}")
+        self.data_frame["district"] = self.data_frame["district"].astype("string").str.strip()
+        self.data_frame["population"] = pd.to_numeric(self.data_frame["population"], errors="coerce")
+        self.data_frame = self.data_frame.dropna(subset=["district", "population"])
+        self.data_frame = self.data_frame[self.data_frame["district"] != ""]
+        self.data_frame = self.data_frame.groupby("district", as_index=False)["population"].sum()
         self.data_frame["district"] = self.data_frame["district"].astype(str).str.strip()
         self.data_frame["population"] = pd.to_numeric(self.data_frame["population"], errors="coerce")
         self.data_frame = self.data_frame.dropna(subset=["district", "population"])

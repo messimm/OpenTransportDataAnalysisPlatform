@@ -10,6 +10,7 @@ access and an API key are available.
 from __future__ import annotations
 
 import json
+import os
 from typing import Any, Dict, Iterable, Optional
 
 import pandas as pd
@@ -33,6 +34,7 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
     - columns_map: optional mapping from source field names to normalized names
     """
 
+    API_URL = "https://apidata.mos.ru/v1/datasets/{dataset_id}/rows"
     API_URL = "https://api.data.mos.ru/v1/datasets/{dataset_id}/rows"
 
     dataset_id: Optional[int] = None
@@ -60,6 +62,10 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
         return self._download_from_api()
 
     def _read_local(self, data_path: str) -> pd.DataFrame:
+        if str(data_path).lower().endswith(".json"):
+            with open(data_path, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+            return self._rows_to_frame(payload).head(self.rows_limit)
         if data_path.endswith(".json"):
             with open(data_path, "r", encoding="utf-8") as f:
                 payload = json.load(f)
@@ -68,6 +74,12 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
 
     def _download_from_api(self) -> pd.DataFrame:
         params: Dict[str, Any] = {"$top": self.rows_limit}
+        api_key = self.cfg.get("api_key") or os.getenv(
+            self.cfg.get("api_key_env", "DATA_MOS_API_KEY")
+        )
+        if api_key:
+            params["api_key"] = api_key
+        url = self.cfg.get("api_url", self.API_URL).format(dataset_id=self.dataset_id)
         api_key = self.cfg.get("api_key")
         if api_key:
             params["api_key"] = api_key
@@ -84,6 +96,13 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
 
     def _rows_to_frame(self, payload: Any) -> pd.DataFrame:
         records = []
+        if isinstance(payload, list):
+            rows = payload
+        elif isinstance(payload, dict):
+            rows = payload.get("Items", payload.get("items", payload.get("rows", [])))
+        else:
+            raise ValueError("Unsupported data.mos.ru JSON payload: expected list or object")
+        for row in rows:
         for row in payload if isinstance(payload, list) else payload.get("Items", []):
             cells = row.get("Cells", row) if isinstance(row, dict) else row
             if isinstance(cells, dict):
@@ -93,9 +112,35 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
     def _normalize_dataframe(self) -> None:
         if self.columns_map:
             self.data_frame = self.data_frame.rename(columns=self.columns_map)
+        self._extract_geo_coordinates()
         for column in ("latitude", "longitude"):
             if column in self.data_frame.columns:
                 self.data_frame[column] = pd.to_numeric(self.data_frame[column], errors="coerce")
+
+    def _extract_geo_coordinates(self) -> None:
+        """Normalize GeoJSON points used by many data.mos.ru datasets."""
+        if {"latitude", "longitude"}.issubset(self.data_frame.columns):
+            return
+        for column in ("geoData", "geodata_center", "GeoData"):
+            if column not in self.data_frame.columns:
+                continue
+            coordinates = self.data_frame[column].apply(self._point_coordinates)
+            if "longitude" not in self.data_frame.columns:
+                self.data_frame["longitude"] = coordinates.str[0]
+            if "latitude" not in self.data_frame.columns:
+                self.data_frame["latitude"] = coordinates.str[1]
+            return
+
+    @staticmethod
+    def _point_coordinates(value):
+        if not isinstance(value, dict):
+            return (None, None)
+        coordinates = value.get("coordinates")
+        while isinstance(coordinates, list) and len(coordinates) == 1:
+            coordinates = coordinates[0]
+        if isinstance(coordinates, (list, tuple)) and len(coordinates) >= 2:
+            return coordinates[0], coordinates[1]
+        return (None, None)
 
     def _init_centers(self) -> None:
         if self.center_column and self.center_column in self.data_frame.columns:
@@ -126,11 +171,21 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
 
     def getGeoData(self, data=None):
         source = self.getAllData(data)
+        missing = {"latitude", "longitude"} - set(source.columns)
+        if missing:
+            raise KeyError(f"Geospatial columns are missing: {', '.join(sorted(missing))}")
         cols = [c for c in [self.label_column, "address", "latitude", "longitude"] if c in source.columns]
         return source[cols].dropna(subset=["latitude", "longitude"], how="any")
 
     def checkAvailability(self) -> bool:
         try:
+            url = self.cfg.get("api_url", self.API_URL).format(dataset_id=self.dataset_id)
+            params = {"$top": 1}
+            api_key = self.cfg.get("api_key") or os.getenv(
+                self.cfg.get("api_key_env", "DATA_MOS_API_KEY")
+            )
+            if api_key:
+                params["api_key"] = api_key
             url = self.API_URL.format(dataset_id=self.dataset_id)
             params = {"$top": 1}
             if self.cfg.get("api_key"):
