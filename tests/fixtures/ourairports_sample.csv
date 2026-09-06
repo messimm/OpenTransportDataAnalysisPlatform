@@ -1,0 +1,9 @@
+id,ident,type,name,latitude_deg,longitude_deg,elevation_ft,continent,iso_country,municipality,scheduled_service
+1,UUEE,large_airport,Sheremetyevo,55.9726,37.4146,622,EU,RU,Moscow,yes
+2,ULLI,large_airport,Pulkovo,59.8003,30.2625,78,EU,RU,Saint Petersburg,yes
+3,EGLL,large_airport,Heathrow,51.4700,-0.4543,83,EU,GB,London,yes
+4,LFPG,large_airport,Charles de Gaulle,49.0097,2.5479,392,EU,FR,Paris,yes
+5,KJFK,large_airport,John F Kennedy,40.6394,-73.7789,13,NA,US,New York,yes
+6,KLAX,large_airport,Los Angeles International,33.9425,-118.4081,125,NA,US,Los Angeles,yes
+7,RJTT,large_airport,Tokyo Haneda,35.5523,139.7798,35,AS,JP,Tokyo,yes
+8,WSSS,large_airport,Singapore Changi,1.3502,103.9944,22,AS,SG,Singapore,yes

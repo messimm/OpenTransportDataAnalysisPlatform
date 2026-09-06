@@ -1,0 +1,5 @@
+[
+  {"id": "central", "name": "Central", "modeName": "tube", "lineStatuses": [{"statusSeverity": 10, "statusSeverityDescription": "Good Service"}]},
+  {"id": "district", "name": "District", "modeName": "tube", "lineStatuses": [{"statusSeverity": 6, "statusSeverityDescription": "Severe Delays", "reason": "Demo disruption"}]},
+  {"id": "victoria", "name": "Victoria", "modeName": "tube", "lineStatuses": [{"statusSeverity": 10, "statusSeverityDescription": "Good Service"}]}
+]

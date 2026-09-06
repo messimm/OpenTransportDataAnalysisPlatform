@@ -9,6 +9,7 @@
 | `MetroUsageVisualizer.py` | `TextReportMetroUsageVisualizer` | Формирует текстовый отчёт по использованию метро. |
 | `DistrictProvisionVisualizer.py` | `DistrictProvisionBarVisualizer` | Строит столбчатую диаграмму обеспеченности районов объектами. |
 | `GeoPointMapVisualizer.py` | `GeoPointMapVisualizer` | Строит универсальную PNG-карту объектов по широте и долготе. |
+| `StructuredTextReportVisualizer.py` | `StructuredTextReportVisualizer` | Сохраняет метрики и табличную часть аналитического отчёта в UTF-8 TXT. |
 
 ## `DistrictProvisionBarVisualizer`
 

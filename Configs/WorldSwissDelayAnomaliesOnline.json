@@ -1,0 +1,13 @@
+{
+  "DataLoaders": [
+    {"Name": "SwissStationboardLoader", "Parameters": {"station": "Zürich HB", "limit": 50, "fallback_path": "tests/fixtures/swiss_stationboard_anomaly.json", "timeout": 30}}
+  ],
+  "DataCheckers": [
+    {"Name": "DataFrameColumnFilterChecker", "Parameters": {"not_empty": ["line", "destination"], "ranges": {"delay_minutes": {"min": 0}}}}
+  ],
+  "DataAnalyzers": [{"Name": "RobustNumericAnomalyAnalysis", "Parameters": {"column": "delay_minutes", "threshold": 3.5}}],
+  "DataVisualizers": [
+    {"Name": "DataFrameToCsvVisualizer", "Parameters": {"path_to_save": "outputs/world_swiss_delay_anomalies.csv"}},
+    {"Name": "StructuredTextReportVisualizer", "Parameters": {"path_to_save": "outputs/world_swiss_delay_anomalies_report.txt"}}
+  ]
+}

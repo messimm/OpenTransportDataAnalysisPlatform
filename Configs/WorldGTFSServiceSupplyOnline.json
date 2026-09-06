@@ -1,0 +1,38 @@
+{
+  "DataLoaders": [
+    {
+      "Name": "GTFSFeedLoader",
+      "Parameters": {
+        "url": "https://cdn.mbta.com/MBTA_GTFS.zip",
+        "fallback_path": "tests/fixtures/gtfs_sample",
+        "timeout": 60
+      }
+    }
+  ],
+  "DataCheckers": [
+    {
+      "Name": "DataFrameColumnFilterChecker",
+      "Parameters": {}
+    }
+  ],
+  "DataAnalyzers": [
+    {
+      "Name": "GTFSServiceSupplyAnalysis",
+      "Parameters": {}
+    }
+  ],
+  "DataVisualizers": [
+    {
+      "Name": "DataFrameToCsvVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/world_gtfs_service_supply.csv"
+      }
+    },
+    {
+      "Name": "StructuredTextReportVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/world_gtfs_service_supply_report.txt"
+      }
+    }
+  ]
+}

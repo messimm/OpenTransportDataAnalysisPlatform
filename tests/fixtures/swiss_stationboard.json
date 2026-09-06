@@ -1,0 +1,8 @@
+{
+  "station": {"id": "8503000", "name": "Zürich HB"},
+  "stationboard": [
+    {"name": "IC 1", "category": "IC", "number": "1", "to": "Bern", "stop": {"departure": "2026-09-06T10:00:00+0200", "platform": "31", "delay": 0, "prognosis": {"departure": "2026-09-06T10:00:00+0200"}}},
+    {"name": "IR 36", "category": "IR", "number": "36", "to": "Basel SBB", "stop": {"departure": "2026-09-06T10:05:00+0200", "platform": "12", "delay": 7, "prognosis": {"departure": "2026-09-06T10:12:00+0200"}}},
+    {"name": "S 5", "category": "S", "number": "5", "to": "Zug", "stop": {"departure": "2026-09-06T10:10:00+0200", "platform": "41/42", "delay": null, "prognosis": {}}}
+  ]
+}

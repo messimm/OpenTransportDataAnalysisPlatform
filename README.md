@@ -10,6 +10,12 @@ public transport analytics, geospatial open data and reproducible research.*
 
 **Кому полезно:** транспортным аналитикам, исследователям городской мобильности, инженерам данных, специалистам по планированию и кодовым агентам, которым нужно быстро воспроизвести расчёты по транспортным данным.
 
+Платформа не ограничена перечисленными ниже кейсами. Её открытая модульная
+архитектура предназначена для решения **любых формализуемых задач транспортного
+анализа**: новый источник, алгоритм, проверку или формат отчёта можно добавить
+отдельным модулем — вручную или с помощью кодового агента — не переписывая
+остальной pipeline.
+
 ---
 
 ## Исследовательский статус и некоммерческое использование
@@ -92,13 +98,75 @@ GBFS — открытый международный формат для сис�
 внешний endpoint недоступен из сети пользователя, пример использует
 `tests/fixtures/gbfs_station_information.json` и отмечает это в `_source`.
 
+### 4. Запустить актуальные операционные кейсы
+
+**Дефицит велосипедов и свободных доков:**
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeAvailabilityOnline.json
+```
+
+Алгоритм объединяет статический `station_information` и оперативный
+`station_status`, вычисляет долю доступных велосипедов и индекс дисбаланса,
+после чего выделяет пустые, почти заполненные и недоступные станции.
+
+**Нарушения движения линий метро:**
+
+```bash
+python launch_from_cfg.py Configs/WorldTfLTubeStatusOnline.json
+```
+
+Алгоритм читает TfL Unified API, ранжирует линии по severity и формирует CSV
+плюс текстовую сводку о нарушениях. Оба примера имеют локальный fallback и
+сохраняют результаты в `outputs/`.
+
+**Предложение транспортных услуг по расписанию GTFS:**
+
+```bash
+python launch_from_cfg.py Configs/WorldGTFSServiceSupplyOnline.json
+```
+
+Алгоритм читает стандартный GTFS ZIP, связывает маршруты, рейсы и остановочные
+времена и ранжирует маршруты по числу рейсов, остановок и составному индексу
+предложения.
+
+**Пунктуальность ближайших отправлений:**
+
+```bash
+python launch_from_cfg.py Configs/WorldSwissDeparturePunctualityOnline.json
+```
+
+Алгоритм использует публичное табло швейцарского транспорта, объединяет
+расписание с прогнозом, рассчитывает задержку и классифицирует отправления как
+`on_time`, `delayed` или `unknown`.
+
+### 5. Запустить авиационные, пригородные и ML-кейсы
+
+```bash
+# Географическая кластеризация аэропортов OurAirports
+python launch_from_cfg.py Configs/WorldAirportClusteringOnline.json
+
+# Предложение пригородных поездов (GTFS route_type=2)
+python launch_from_cfg.py Configs/WorldGTFSCommuterRailSupplyOnline.json
+
+# Кластеризация станций по координатам и интенсивности обслуживания
+python launch_from_cfg.py Configs/WorldGTFSStationClusteringOnline.json
+
+# Робастная детекция аномально больших задержек
+python launch_from_cfg.py Configs/WorldSwissDelayAnomaliesOnline.json
+```
+
+Кластеризации используют воспроизводимый `KMeans` с нормализацией признаков.
+Детектор аномалий основан на медиане и MAD, поэтому единичные экстремальные
+задержки меньше искажают базовый уровень, чем при использовании среднего.
+
 Посмотреть все доступные конфиги можно без запуска анализа:
 
 ```bash
 python launch_from_cfg.py --list-configs
 ```
 
-### 4. Запустить все готовые районные кейсы
+### 6. Запустить все готовые районные кейсы
 
 ```bash
 python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
@@ -121,6 +189,11 @@ TOP/BOTTOM-10 отчёты и PNG-карты объектов. Папка не �
 | [Прокат велосипедов, dataset 1777](https://data.mos.ru/opendata/1777) | `MoscowBikeRentalLoader` | Обеспеченность районов пунктами велопроката |
 | [Маршруты и остановки НГПТ, dataset 60661](https://data.mos.ru/opendata/60661) | `MoscowTransitStopsRoutesLoader` | Справочные маршрутно-остановочные сценарии |
 | [Citi Bike GBFS station information](https://gbfs.citibikenyc.com/gbfs/en/station_information.json) | `GBFSStationInformationLoader` | Международный пример открытого велошеринга и карта станций |
+| [Citi Bike GBFS station status](https://gbfs.citibikenyc.com/gbfs/en/station_status.json) | `GBFSStationStatusLoader` | Поиск пустых, переполненных и недоступных станций |
+| [TfL Unified API — Tube status](https://api.tfl.gov.uk/Line/Mode/tube/Status) | `TfLLineStatusLoader` | Мониторинг текущих нарушений работы линий метро |
+| [MBTA GTFS](https://cdn.mbta.com/MBTA_GTFS.zip) | `GTFSFeedLoader` | Анализ предложения рейсов и охвата остановок по маршрутам |
+| [Swiss public transport API](https://transport.opendata.ch/v1/stationboard) | `SwissStationboardLoader` | Анализ прогнозных задержек ближайших отправлений |
+| [OurAirports worldwide airport data](https://ourairports.com/data/) | `OurAirportsLoader` | Авиационные реестры и кластеризация аэропортов |
 | CSV/JSON с населением районов | `DistrictPopulationLoader` | Нормировка объектов на 100 тыс. жителей |
 | Локальные валидаторные/мобильные данные | `MetroDataLoader`, `MobileOperatorsLoader` | Аномалии, фрод, кластеризация, использование метро |
 
@@ -139,6 +212,14 @@ TOP/BOTTOM-10 отчёты и PNG-карты объектов. Папка не �
 | Сводная проверка набора платных парковок | `Configs/DataMosStreetParking.json` | Табличная проверка структуры и совместимости | [описание](docs/SOLVED_TASKS.md#сводная-проверка-набора-платных-парковок) |
 | Online-проверка актуальных парковок | `Configs/DataMosStreetParkingOnline.json` | Автоматическая загрузка из API и CSV-сводка | [описание](docs/SOLVED_TASKS.md#online-проверка-актуального-набора-парковок) |
 | Международный пример велошеринга GBFS | `Configs/WorldGBFSBikeStationsOnline.json` | Online-загрузка, CSV и PNG-карта | [описание](docs/SOLVED_TASKS.md#международный-online-пример-gbfs) |
+| Дисбаланс велошеринга | `Configs/WorldGBFSBikeAvailabilityOnline.json` | Рейтинг проблемных станций, CSV и PNG-карта | [описание](docs/SOLVED_TASKS.md#поиск-дисбаланса-велошеринга) |
+| Нарушения движения метро TfL | `Configs/WorldTfLTubeStatusOnline.json` | Рейтинг линий, CSV и текстовая сводка | [описание](docs/SOLVED_TASKS.md#мониторинг-нарушений-движения-tfl) |
+| Предложение маршрутов GTFS | `Configs/WorldGTFSServiceSupplyOnline.json` | Рейтинг маршрутов, CSV и текстовый отчёт | [описание](docs/SOLVED_TASKS.md#анализ-предложения-по-gtfs) |
+| Пунктуальность отправлений | `Configs/WorldSwissDeparturePunctualityOnline.json` | Рейтинг задержек, CSV и текстовый отчёт | [описание](docs/SOLVED_TASKS.md#пунктуальность-ближайших-отправлений) |
+| Кластеризация аэропортов | `Configs/WorldAirportClusteringOnline.json` | CSV кластеров и PNG-карта | [описание](docs/SOLVED_TASKS.md#кластеризация-аэропортов) |
+| Предложение пригородных поездов | `Configs/WorldGTFSCommuterRailSupplyOnline.json` | Рейтинг маршрутов, CSV и TXT | [описание](docs/SOLVED_TASKS.md#предложение-пригородных-поездов) |
+| Кластеризация станций | `Configs/WorldGTFSStationClusteringOnline.json` | Кластеры по географии и обслуживанию, CSV и PNG | [описание](docs/SOLVED_TASKS.md#кластеризация-станций-gtfs) |
+| Аномалии задержек | `Configs/WorldSwissDelayAnomaliesOnline.json` | Робастные anomaly scores, CSV и TXT | [описание](docs/SOLVED_TASKS.md#аномалии-задержек) |
 
 Полная страница кейсов: [`docs/SOLVED_TASKS.md`](docs/SOLVED_TASKS.md).
 
@@ -166,6 +247,9 @@ TOP/BOTTOM-10 отчёты и PNG-карты объектов. Папка не �
 - **Разделение ответственности:** чтение, проверка, анализ и представление результата находятся в разных модулях.
 - **Воспроизводимость:** демонстрационные конфиги работают на маленьких локальных fixtures без сети.
 - **Расширяемость:** новый источник или отчёт добавляется отдельным классом и подключается по имени в конфиге.
+- **Agent-friendly разработка:** специалист может описать новую транспортную
+  задачу на профессиональном языке, а агент добавит недостающие модули, тесты,
+  конфиг и документацию по правилам `AGENTS.md`.
 
 ### Проверка установки
 

@@ -24,6 +24,11 @@
 | `MobileLoaders.py` | `MobileOperatorsLoader` | Локальные агрегаты мобильных операторов по зонам отправления/прибытия. |
 | `DataMosLoaders.py` | `DataMosDatasetLoader` и производные классы | Открытые транспортные наборы портала `data.mos.ru`. |
 | `GBFSDataLoader.py` | `GBFSStationInformationLoader` | Международные открытые данные вело- и микромобильности в формате GBFS. |
+| `GBFSDataLoader.py` | `GBFSStationStatusLoader` | Оперативное наличие велосипедов и свободных доков GBFS. |
+| `TfLDataLoader.py` | `TfLLineStatusLoader` | Текущие статусы линий из открытого TfL Unified API. |
+| `GTFSDataLoader.py` | `GTFSFeedLoader` | Статические расписания из GTFS ZIP или распакованной папки с текстовыми таблицами. |
+| `SwissTransportDataLoader.py` | `SwissStationboardLoader` | Ближайшие отправления и прогнозные задержки швейцарского транспорта. |
+| `AirportDataLoader.py` | `OurAirportsLoader` | Всемирный открытый реестр аэропортов OurAirports. |
 
 ## Адаптеры `data.mos.ru`
 
@@ -72,6 +77,17 @@ python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
 
 ```bash
 python launch_from_cfg.py Configs/WorldGBFSBikeStationsOnline.json
+```
+
+Операционные примеры GBFS и TfL:
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeAvailabilityOnline.json
+python launch_from_cfg.py Configs/WorldTfLTubeStatusOnline.json
+python launch_from_cfg.py Configs/WorldGTFSServiceSupplyOnline.json
+python launch_from_cfg.py Configs/WorldSwissDeparturePunctualityOnline.json
+python launch_from_cfg.py Configs/WorldAirportClusteringOnline.json
+python launch_from_cfg.py Configs/WorldGTFSCommuterRailSupplyOnline.json
 ```
 
 Оба online-конфига содержат `fallback_path`, поэтому подходят для сетей с proxy

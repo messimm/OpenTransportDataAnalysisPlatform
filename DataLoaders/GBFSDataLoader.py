@@ -86,3 +86,15 @@ class GBFSStationInformationLoader(BasicDataLoaderModule):
     def getDataByColumnSet(self, data, column_name, values):
         source = self.getAllData(data)
         return source[source[column_name].isin(values)]
+
+
+class GBFSStationStatusLoader(GBFSStationInformationLoader):
+    """Read the real-time GBFS station_status feed."""
+
+    @staticmethod
+    def _to_dataframe(payload):
+        data = payload.get("data", {}) if isinstance(payload, dict) else {}
+        stations = data.get("stations", []) if isinstance(data, dict) else []
+        if not isinstance(stations, list):
+            raise ValueError("Invalid GBFS station_status payload")
+        return pd.DataFrame.from_records(stations)

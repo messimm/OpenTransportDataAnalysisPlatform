@@ -48,6 +48,14 @@ python -m unittest discover -s tests -v
 python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
 python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
 python launch_from_cfg.py Configs/WorldGBFSBikeStationsOnline.json
+python launch_from_cfg.py Configs/WorldGBFSBikeAvailabilityOnline.json
+python launch_from_cfg.py Configs/WorldTfLTubeStatusOnline.json
+python launch_from_cfg.py Configs/WorldGTFSServiceSupplyOnline.json
+python launch_from_cfg.py Configs/WorldSwissDeparturePunctualityOnline.json
+python launch_from_cfg.py Configs/WorldAirportClusteringOnline.json
+python launch_from_cfg.py Configs/WorldGTFSCommuterRailSupplyOnline.json
+python launch_from_cfg.py Configs/WorldGTFSStationClusteringOnline.json
+python launch_from_cfg.py Configs/WorldSwissDelayAnomaliesOnline.json
 ```
 
 For docs-only changes, also check conflict markers:

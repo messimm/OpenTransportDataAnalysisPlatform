@@ -8,11 +8,22 @@ import pandas as pd
 import requests
 
 from DataAnalyzers.DistrictProvisionAnalyzer import DistrictObjectProvisionAnalysis
+from DataAnalyzers.BikeShareAvailabilityAnalyzer import BikeShareAvailabilityAnalysis
+from DataAnalyzers.ServiceStatusAnalyzer import ServiceStatusAnalysis
+from DataAnalyzers.GTFSServiceSupplyAnalyzer import GTFSServiceSupplyAnalysis
+from DataAnalyzers.DeparturePunctualityAnalyzer import DeparturePunctualityAnalysis
+from DataAnalyzers.GeoClusteringAnalyzer import GeoKMeansAnalysis
+from DataAnalyzers.GTFSStopClusterAnalyzer import GTFSStopClusterAnalysis
+from DataAnalyzers.RobustAnomalyAnalyzer import RobustNumericAnomalyAnalysis
 from DataCheckers.DataFrameFilterChecker import DataFrameColumnFilterChecker
 from DataCheckers.DataMosChecker import DataMosGeoChecker
 from DataLoaders.DataMosLoaders import MoscowStreetParkingLoader
 from DataLoaders.DistrictDataLoaders import DistrictPopulationLoader
-from DataLoaders.GBFSDataLoader import GBFSStationInformationLoader
+from DataLoaders.GBFSDataLoader import GBFSStationInformationLoader, GBFSStationStatusLoader
+from DataLoaders.TfLDataLoader import TfLLineStatusLoader
+from DataLoaders.GTFSDataLoader import GTFSFeedLoader
+from DataLoaders.SwissTransportDataLoader import SwissStationboardLoader
+from DataLoaders.AirportDataLoader import OurAirportsLoader
 from DataVisualizers.DataFrameToCsvVisualizer import DataFrameToCsvVisualizer
 from launch_from_cfg import load_config, pipeline_from_config
 
@@ -21,6 +32,85 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 
 class PlatformTests(unittest.TestCase):
+    def test_airport_clustering_is_reproducible(self):
+        loader = OurAirportsLoader(
+            {"data_path": str(FIXTURES / "ourairports_sample.csv")}
+        )
+        checker = DataFrameColumnFilterChecker({"not_empty": ["airport_id"]})
+        table, points = GeoKMeansAnalysis(
+            {"n_clusters": 3, "random_state": 42}
+        ).analyze(loader, checker)
+        self.assertEqual(table["cluster"].nunique(), 3)
+        self.assertEqual(table["cluster"].tolist(), points["cluster"].tolist())
+
+    def test_gtfs_station_clustering_uses_service_intensity(self):
+        loader = GTFSFeedLoader({"data_path": str(FIXTURES / "gtfs_sample")})
+        checker = DataFrameColumnFilterChecker({"not_empty": ["stop_id"]})
+        table, _ = GTFSStopClusterAnalysis({"n_clusters": 2}).analyze(loader, checker)
+        self.assertIn("stop_events", table)
+        self.assertEqual(table["cluster"].nunique(), 2)
+
+    def test_robust_anomaly_detection_finds_large_delay(self):
+        loader = SwissStationboardLoader(
+            {"data_path": str(FIXTURES / "swiss_stationboard_anomaly.json")}
+        )
+        checker = DataFrameColumnFilterChecker({"ranges": {"delay_minutes": {"min": 0}}})
+        table, report = RobustNumericAnomalyAnalysis(
+            {"column": "delay_minutes", "threshold": 3.5}
+        ).analyze(loader, checker)
+        self.assertEqual(report["metrics"]["anomalies"], 1)
+        self.assertEqual(table.iloc[0]["delay_minutes"], 30)
+
+    def test_commuter_rail_filter_keeps_gtfs_route_type_two(self):
+        loader = GTFSFeedLoader({"data_path": str(FIXTURES / "gtfs_sample")})
+        table, _ = GTFSServiceSupplyAnalysis({"route_types": [2]}).analyze(loader, None)
+        self.assertEqual(table["route_id"].tolist(), ["R1"])
+
+    def test_gtfs_service_supply_ranks_routes(self):
+        loader = GTFSFeedLoader({"data_path": str(FIXTURES / "gtfs_sample")})
+        table, report = GTFSServiceSupplyAnalysis().analyze(loader, None)
+        self.assertEqual(table.iloc[0]["route_id"], "R1")
+        self.assertEqual(report["metrics"]["trips_total"], 3)
+        self.assertEqual(report["metrics"]["stops_total"], 3)
+
+    def test_departure_punctuality_classifies_delays(self):
+        loader = SwissStationboardLoader(
+            {"data_path": str(FIXTURES / "swiss_stationboard.json")}
+        )
+        checker = DataFrameColumnFilterChecker({"not_empty": ["line"]})
+        table, report = DeparturePunctualityAnalysis(
+            {"delay_threshold_minutes": 3}
+        ).analyze(loader, checker)
+        self.assertEqual(report["metrics"]["delayed_departures"], 1)
+        self.assertEqual(report["metrics"]["unknown_predictions"], 1)
+        self.assertEqual(table.iloc[0]["punctuality_state"], "delayed")
+
+    def test_bikeshare_availability_detects_empty_and_full_stations(self):
+        information = GBFSStationInformationLoader(
+            {"data_path": str(FIXTURES / "gbfs_station_information.json")}
+        )
+        status = GBFSStationStatusLoader(
+            {"data_path": str(FIXTURES / "gbfs_station_status.json")}
+        )
+        checker = DataFrameColumnFilterChecker({"not_empty": ["station_id"]})
+        table, points = BikeShareAvailabilityAnalysis().analyze(
+            [information, status], [checker, checker]
+        )
+        states = set(table["availability_state"])
+        self.assertIn("empty", states)
+        self.assertIn("near_full", states)
+        self.assertEqual(len(points), 3)
+
+    def test_tfl_status_analysis_reports_disruption(self):
+        loader = TfLLineStatusLoader(
+            {"data_path": str(FIXTURES / "tfl_line_status.json")}
+        )
+        checker = DataFrameColumnFilterChecker({"not_empty": ["line_id", "status"]})
+        table, report = ServiceStatusAnalysis().analyze(loader, checker)
+        self.assertEqual(report["metrics"]["lines_total"], 3)
+        self.assertEqual(report["metrics"]["disrupted_lines"], 1)
+        self.assertEqual(table.iloc[0]["line_id"], "district")
+
     @patch("DataLoaders.GBFSDataLoader.requests.get")
     def test_gbfs_online_config_downloads_and_writes_csv_and_map(self, get):
         response = get.return_value

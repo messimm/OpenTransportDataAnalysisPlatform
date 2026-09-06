@@ -1,0 +1,15 @@
+{
+  "DataLoaders": [
+    {"Name": "OurAirportsLoader", "Parameters": {"fallback_path": "tests/fixtures/ourairports_sample.csv", "timeout": 60}}
+  ],
+  "DataCheckers": [
+    {"Name": "DataFrameColumnFilterChecker", "Parameters": {"not_empty": ["airport_id", "name"], "in_values": {"type": ["large_airport", "medium_airport"]}, "ranges": {"latitude": {"min": -90, "max": 90}, "longitude": {"min": -180, "max": 180}}}}
+  ],
+  "DataAnalyzers": [
+    {"Name": "GeoKMeansAnalysis", "Parameters": {"n_clusters": 3, "feature_columns": ["latitude", "longitude"], "random_state": 42}}
+  ],
+  "DataVisualizers": [
+    {"Name": "DataFrameToCsvVisualizer", "Parameters": {"path_to_save": "outputs/world_airport_clusters.csv"}},
+    {"Name": "GeoPointMapVisualizer", "Parameters": {"path_to_save": "outputs/world_airport_clusters_map.png", "title": "Worldwide airport clusters", "color_column": "cluster"}}
+  ]
+}
