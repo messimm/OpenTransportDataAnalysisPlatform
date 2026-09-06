@@ -1,0 +1,22 @@
+{
+  "DataLoaders": [
+    {
+      "Name": "TfLLineStatusLoader",
+      "Parameters": {
+        "url": "https://api.tfl.gov.uk/Line/Mode/tube/Status",
+        "fallback_path": "tests/fixtures/tfl_line_status.json",
+        "timeout": 30
+      }
+    }
+  ],
+  "DataCheckers": [
+    {"Name": "DataFrameColumnFilterChecker", "Parameters": {"not_empty": ["line_id", "line_name", "status"], "ranges": {"severity": {"min": 0}}}}
+  ],
+  "DataAnalyzers": [
+    {"Name": "ServiceStatusAnalysis", "Parameters": {"healthy_severity": 10}}
+  ],
+  "DataVisualizers": [
+    {"Name": "DataFrameToCsvVisualizer", "Parameters": {"path_to_save": "outputs/world_tfl_tube_status.csv"}},
+    {"Name": "StructuredTextReportVisualizer", "Parameters": {"path_to_save": "outputs/world_tfl_tube_status_report.txt"}}
+  ]
+}

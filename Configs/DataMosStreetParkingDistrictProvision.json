@@ -1,0 +1,93 @@
+{
+  "DataLoaders": [
+    {
+      "Name": "MoscowStreetParkingLoader",
+      "Parameters": {
+        "rows_limit": 5000,
+        "columns_map": {
+          "District": "district"
+        },
+        "data_path": "tests/fixtures/datamos_district_rows.json"
+      }
+    },
+    {
+      "Name": "DistrictPopulationLoader",
+      "Parameters": {
+        "data_path": "tests/fixtures/district_population.csv"
+      }
+    }
+  ],
+  "DataCheckers": [
+    {
+      "Name": "DataFrameColumnFilterChecker",
+      "Parameters": {
+        "not_empty": [
+          "district"
+        ],
+        "ranges": {
+          "latitude": {
+            "min": 55.0,
+            "max": 56.2
+          },
+          "longitude": {
+            "min": 36.5,
+            "max": 38.5
+          }
+        }
+      }
+    },
+    {
+      "Name": "DataFrameColumnFilterChecker",
+      "Parameters": {
+        "not_empty": [
+          "district"
+        ],
+        "ranges": {
+          "population": {
+            "min": 1
+          }
+        }
+      }
+    }
+  ],
+  "DataAnalyzers": [
+    {
+      "Name": "DistrictObjectProvisionAnalysis",
+      "Parameters": {
+        "object_name": "street_parking",
+        "object_district_column": "district",
+        "capacity_column": "capacity",
+        "per_population": 100000,
+        "level_metric": "capacity_per_population",
+        "outputs": [
+          "summary",
+          "top_report",
+          "map_points"
+        ],
+        "top_n": 10
+      }
+    }
+  ],
+  "DataVisualizers": [
+    {
+      "Name": "DataFrameToCsvVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/street_parking_district_provision_summary.csv"
+      }
+    },
+    {
+      "Name": "DistrictProvisionTopReportVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/street_parking_district_provision_top10_report.txt",
+        "csv_prefix": "outputs/street_parking_district_provision_top10"
+      }
+    },
+    {
+      "Name": "DistrictProvisionMapVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/street_parking_district_provision_map.png",
+        "title": "Street parking provision by district"
+      }
+    }
+  ]
+}

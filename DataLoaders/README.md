@@ -1,0 +1,143 @@
+# DataLoaders
+
+Загрузчики данных (`DataLoaders`) приводят внешние транспортные источники к единому для платформы интерфейсу на базе `pandas.DataFrame`. Типовой загрузчик должен уметь вернуть весь набор данных, отфильтровать строки по колонкам и, если применимо, сопоставить внутренний идентификатор объекта с человекочитаемой подписью.
+
+## Общий интерфейс
+
+Большинство загрузчиков реализуют следующие методы:
+
+| Метод | Назначение |
+| --- | --- |
+| `getAllData(data=None)` | Возвращает исходный `DataFrame` или переданный промежуточный набор данных. |
+| `getDataByColumnValue(data, column_name, value)` | Фильтрует строки по точному значению колонки. |
+| `getDataByColumnRange(data, column_name, low, high)` | Фильтрует строки по открытому диапазону значений. |
+| `getDataByColumnSet(data, column_name, values)` | Фильтрует строки по набору допустимых значений. |
+| `labelCenter(center)` | Возвращает строку/строки с описанием транспортного объекта или зоны. |
+
+Наследование строится от `BasicDataLoaderModule`, а конкретные загрузчики расширяют этот контракт под свой тип данных.
+
+## Существующие загрузчики
+
+| Файл | Класс | Источник/тип данных |
+| --- | --- | --- |
+| `MetroDataLoader.py` | `MetroDataLoader` | Локальные данные валидаторов/проходов метро. |
+| `MobileLoaders.py` | `MobileOperatorsLoader` | Локальные агрегаты мобильных операторов по зонам отправления/прибытия. |
+| `DataMosLoaders.py` | `DataMosDatasetLoader` и производные классы | Открытые транспортные наборы портала `data.mos.ru`. |
+| `GBFSDataLoader.py` | `GBFSStationInformationLoader` | Международные открытые данные вело- и микромобильности в формате GBFS. |
+| `GBFSDataLoader.py` | `GBFSStationStatusLoader` | Оперативное наличие велосипедов и свободных доков GBFS. |
+| `TfLDataLoader.py` | `TfLLineStatusLoader` | Текущие статусы линий из открытого TfL Unified API. |
+| `GTFSDataLoader.py` | `GTFSFeedLoader` | Статические расписания из GTFS ZIP или распакованной папки с текстовыми таблицами. |
+| `SwissTransportDataLoader.py` | `SwissStationboardLoader` | Ближайшие отправления и прогнозные задержки швейцарского транспорта. |
+| `AirportDataLoader.py` | `OurAirportsLoader` | Всемирный открытый реестр аэропортов OurAirports. |
+
+## Адаптеры `data.mos.ru`
+
+Файл `DataMosLoaders.py` добавляет базовый загрузчик `DataMosDatasetLoader` и четыре специализированных адаптера для московских открытых транспортных данных.
+
+| Адаптер | Dataset | Ссылка | Основные нормализованные поля | Подходящие сценарии |
+| --- | --- | --- | --- | --- |
+| `MoscowStreetParkingLoader` | `623` | [Платные парковки на улично-дорожной сети](https://data.mos.ru/opendata/623) | `name`, `parking_id`, `address`, `capacity`, `latitude`, `longitude` | Анализ ёмкости парковок, геофильтрация, выгрузка справочника. |
+| `MoscowTaxiParkingLoader` | `621` | [Парковки такси](https://data.mos.ru/opendata/621) | `name`, `address`, `latitude`, `longitude` | Анализ покрытия стоянками такси и пространственные проверки. |
+| `MoscowBikeRentalLoader` | `1777` | [Прокат велосипедов](https://data.mos.ru/opendata/1777) | `name`, `address`, `latitude`, `longitude`, `is_network_object` | Анализ пунктов велопроката и фильтрация сетевых/несетевых объектов, если поле доступно в выгрузке. |
+| `MoscowTransitStopsRoutesLoader` | `60661` | [Маршруты и остановки НГПТ](https://data.mos.ru/opendata/60661) | `route_number`, `stop_name`, `direction`, `transport_type`, `latitude`, `longitude` | Справочные маршрутизационные сценарии, фильтрация по маршрутам, остановкам и типам транспорта. |
+
+### Параметры конфигурации `DataMosDatasetLoader`
+
+| Параметр | Обязателен | Описание |
+| --- | --- | --- |
+| `dataset_id` | Нет для готовых адаптеров, да для базового класса | Идентификатор набора на `data.mos.ru`, например `623`. |
+| `data_path` | Нет | Локальный CSV/JSON-кэш. Если указан, загрузчик читает файл и не обращается к API. |
+| `api_key` | Нет | Ключ API `data.mos.ru`, если он требуется для окружения или повышенных лимитов. |
+| `api_key_env` | Нет | Имя переменной окружения с ключом API. По умолчанию `DATA_MOS_API_KEY`. |
+| `api_url` | Нет | Шаблон альтернативного API endpoint; обычно менять не требуется. |
+| `rows_limit` | Нет | Максимальное количество строк для загрузки или чтения. По умолчанию `5000`. |
+| `columns_map` | Нет | Дополнительное переименование колонок источника в нормализованные имена платформы. |
+| `sep` | Нет | Разделитель для CSV-кэша. По умолчанию `;`. |
+| `timeout` | Нет | Таймаут HTTP-запроса к API в секундах. |
+| `fallback_path` | Нет | Локальный JSON-кэш, используемый автоматически при недоступности API. |
+
+### Пример конфигурации pipeline
+
+Готовый офлайн-пример находится в `Configs/DataMosStreetParking.json` и запускает
+fixture набора платных парковок через геопроверку, сводный анализатор и CSV-визуализатор.
+Результат сохраняется в `outputs/street_parking_summary.csv`. Для расширенных задач
+обеспеченности используются CSV-отчёты и PNG-карты:
+
+```bash
+python launch_from_cfg.py Configs/DataMosStreetParking.json
+```
+
+Online-пример, который сам обращается к `https://apidata.mos.ru` и сохраняет CSV:
+
+```bash
+python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
+```
+
+Международный пример на открытом формате GBFS:
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeStationsOnline.json
+```
+
+Операционные примеры GBFS и TfL:
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeAvailabilityOnline.json
+python launch_from_cfg.py Configs/WorldTfLTubeStatusOnline.json
+python launch_from_cfg.py Configs/WorldGTFSServiceSupplyOnline.json
+python launch_from_cfg.py Configs/WorldSwissDeparturePunctualityOnline.json
+python launch_from_cfg.py Configs/WorldAirportClusteringOnline.json
+python launch_from_cfg.py Configs/WorldGTFSCommuterRailSupplyOnline.json
+```
+
+Оба online-конфига содержат `fallback_path`, поэтому подходят для сетей с proxy
+или временно недоступным внешним API. Происхождение каждой строки записывается в
+служебную колонку `_source`.
+
+Если окружение не имеет доступа к `apidata.mos.ru`, скачайте CSV/JSON с карточки набора данных и укажите путь в параметре `data_path`:
+
+```json
+{
+  "DataLoaders": [
+    {
+      "Name": "MoscowStreetParkingLoader",
+      "Parameters": {
+        "data_path": "data/street_parking.csv",
+        "rows_limit": 1000
+      }
+    }
+  ]
+}
+```
+
+### Проверка качества данных
+
+Для статических геоданных `data.mos.ru` добавлен `DataMosGeoChecker`. При `require_coordinates=true` он оставляет только строки с координатами в ожидаемых границах Москвы:
+
+```json
+{"Name": "DataMosGeoChecker", "Parameters": {"require_coordinates": true}}
+```
+
+### Совместимость с анализаторами платформы
+
+Наборы `data.mos.ru`, реализованные в этих адаптерах, в основном являются статическими справочниками. Поэтому они напрямую совместимы с:
+
+- `GenericDatasetSummaryAnalysis` для сводки строк, колонок, координат и совместимости;
+- фильтрами загрузчиков `getDataByColumnValue`, `getDataByColumnRange`, `getDataByColumnSet`;
+- визуализаторами/экспортом, которые принимают `DataFrame`, например `DataFrameToCsvVisualizer` или `DataFrameToExcelVisualizer`;
+- геоаналитическими сценариями, если используются нормализованные поля `latitude` и `longitude`.
+
+Они не являются прямой заменой временных рядов пассажиропотока. Для `AnomalyDetection`, `PotentialFraudAnalysis` и `HoodTypeAnalysis` обычно нужны данные с временными метками, поездками, валидаторами или потоками по зонам. Наборы `data.mos.ru` можно использовать вместе с такими анализаторами после объединения со счетчиками спроса, транзакциями или мобильными агрегатами.
+
+Дополнительная краткая справка по этим наборам также доступна в `DataLoaders/DATAMOS.md`.
+
+## Загрузчики сторонних районных данных
+
+Для задач обеспеченности районов объектами добавлен `DistrictPopulationLoader` (`DistrictDataLoaders.py`). Он читает CSV/JSON с численностью населения по районам и нормализует поля к виду:
+
+| Поле | Описание |
+| --- | --- |
+| `district` | Название района, используемое для соединения с объектами `data.mos.ru`. |
+| `population` | Численность населения района. |
+
+Параметры `district_column` и `population_column` позволяют подключать внешние таблицы с другими именами колонок. Такой загрузчик используется вместе с объектными загрузчиками `data.mos.ru` для расчёта показателей обеспеченности: объектов на 100 тыс. жителей или суммарной ёмкости на 100 тыс. жителей.

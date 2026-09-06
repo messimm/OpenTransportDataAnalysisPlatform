@@ -1,0 +1,52 @@
+{
+  "DataLoaders": [
+    {
+      "Name": "GBFSStationInformationLoader",
+      "Parameters": {
+        "url": "https://gbfs.citibikenyc.com/gbfs/en/station_information.json",
+        "fallback_path": "tests/fixtures/gbfs_station_information.json",
+        "timeout": 30
+      }
+    },
+    {
+      "Name": "GBFSStationStatusLoader",
+      "Parameters": {
+        "url": "https://gbfs.citibikenyc.com/gbfs/en/station_status.json",
+        "fallback_path": "tests/fixtures/gbfs_station_status.json",
+        "timeout": 30
+      }
+    }
+  ],
+  "DataCheckers": [
+    {
+      "Name": "DataFrameColumnFilterChecker",
+      "Parameters": {
+        "not_empty": ["station_id", "name"],
+        "ranges": {
+          "latitude": {"min": -90, "max": 90},
+          "longitude": {"min": -180, "max": 180}
+        }
+      }
+    },
+    {
+      "Name": "DataFrameColumnFilterChecker",
+      "Parameters": {
+        "not_empty": ["station_id"],
+        "ranges": {
+          "num_bikes_available": {"min": 0},
+          "num_docks_available": {"min": 0}
+        }
+      }
+    }
+  ],
+  "DataAnalyzers": [
+    {
+      "Name": "BikeShareAvailabilityAnalysis",
+      "Parameters": {"empty_bikes": 0, "full_docks": 1, "target_ratio": 0.5}
+    }
+  ],
+  "DataVisualizers": [
+    {"Name": "DataFrameToCsvVisualizer", "Parameters": {"path_to_save": "outputs/world_gbfs_bike_availability.csv"}},
+    {"Name": "GeoPointMapVisualizer", "Parameters": {"path_to_save": "outputs/world_gbfs_bike_availability_map.png", "title": "Bike-share station availability"}}
+  ]
+}

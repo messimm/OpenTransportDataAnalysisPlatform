@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: OpenTransportDataPlatform
+message: "Если вы используете платформу в исследовании, пожалуйста, укажите автора и репозиторий."
+type: software
+authors:
+  - family-names: Bulygin
+    given-names: Mark Valerievich
+    email: messimm@yandex.ru
+keywords:
+  - transport data analysis
+  - urban mobility
+  - public transport
+  - data.mos.ru
+  - транспортная аналитика
+  - городская мобильность
+license: MIT

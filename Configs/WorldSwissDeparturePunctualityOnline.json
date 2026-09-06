@@ -1,0 +1,15 @@
+{
+  "DataLoaders": [
+    {"Name": "SwissStationboardLoader", "Parameters": {"station": "Zürich HB", "limit": 50, "fallback_path": "tests/fixtures/swiss_stationboard.json", "timeout": 30}}
+  ],
+  "DataCheckers": [
+    {"Name": "DataFrameColumnFilterChecker", "Parameters": {"not_empty": ["station", "line", "destination", "scheduled_departure"]}}
+  ],
+  "DataAnalyzers": [
+    {"Name": "DeparturePunctualityAnalysis", "Parameters": {"delay_threshold_minutes": 3}}
+  ],
+  "DataVisualizers": [
+    {"Name": "DataFrameToCsvVisualizer", "Parameters": {"path_to_save": "outputs/world_swiss_departure_punctuality.csv"}},
+    {"Name": "StructuredTextReportVisualizer", "Parameters": {"path_to_save": "outputs/world_swiss_departure_punctuality_report.txt"}}
+  ]
+}

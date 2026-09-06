@@ -1,0 +1,13 @@
+{
+  "DataLoaders": [
+    {"Name": "GTFSFeedLoader", "Parameters": {"url": "https://cdn.mbta.com/MBTA_GTFS.zip", "fallback_path": "tests/fixtures/gtfs_sample", "timeout": 60}}
+  ],
+  "DataCheckers": [
+    {"Name": "DataFrameColumnFilterChecker", "Parameters": {"not_empty": ["stop_id", "stop_name"], "ranges": {"latitude": {"min": -90, "max": 90}, "longitude": {"min": -180, "max": 180}}}}
+  ],
+  "DataAnalyzers": [{"Name": "GTFSStopClusterAnalysis", "Parameters": {"n_clusters": 2, "random_state": 42}}],
+  "DataVisualizers": [
+    {"Name": "DataFrameToCsvVisualizer", "Parameters": {"path_to_save": "outputs/world_gtfs_station_clusters.csv"}},
+    {"Name": "GeoPointMapVisualizer", "Parameters": {"path_to_save": "outputs/world_gtfs_station_clusters_map.png", "title": "GTFS station clusters", "color_column": "cluster"}}
+  ]
+}

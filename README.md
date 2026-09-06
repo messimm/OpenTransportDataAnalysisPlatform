@@ -1,50 +1,313 @@
 # OpenTransportDataPlatform
 
-**OpenTransportDataPlatform** — модульная программная платформа с открытым исходным кодом, предназначенная для анализа транспортных данных. Платформа реализует архитектурный подход, ориентированный на повторное использование компонентов и ускоренное прототипирование аналитических решений. Основное внимание уделяется решению прикладных задач в области городской мобильности, интеллектуального транспортного планирования и обработки больших транспортных потоков.
+**OpenTransportDataPlatform** — открытая модульная Python-платформа для
+транспортной аналитики, анализа городской мобильности и открытых транспортных
+данных: пассажиропотоки, валидаторные данные, мобильные агрегаты, геоданные,
+реестры инфраструктуры, наборы `data.mos.ru` и районные показатели.
 
-**OpenTransportDataPlatform** is a modular open-source software platform designed for the analysis of transportation data. The platform implements an architectural approach focused on component reuse and rapid prototyping of analytical solutions. The project emphasizes solving practical problems in urban mobility, intelligent transportation planning, and large-scale traffic analysis.
+*Open-source Python platform for transport data analysis, urban mobility,
+public transport analytics, geospatial open data and reproducible research.*
 
-## Основные возможности / Key Features:
+**Кому полезно:** транспортным аналитикам, исследователям городской мобильности, инженерам данных, специалистам по планированию и кодовым агентам, которым нужно быстро воспроизвести расчёты по транспортным данным.
 
-- Унифицированная модель представления транспортных данных различных типов (GPS-треки, данные валидаторов, сетевые графы и др.)
-- Гибкая архитектура, позволяющая конструировать решения из готовых модулей
-- Поддержка задач кластеризации, обнаружения аномалий и выявления мошенничества
-- Расширяемая система API для интеграции с внешними источниками данных
-- Возможность локального и облачного развёртывания
-- Реализация на Python с использованием стандартных аналитических и инфраструктурных библиотек
-
----
-
-- Unified model for various types of transportation data (e.g., GPS traces, validator logs, network graphs)
-- Flexible architecture for assembling solutions from reusable modules
-- Built-in support for clustering, anomaly detection, and fraud identification
-- Extensible API system for integration with external data sources
-- Supports both local and cloud-based deployment
-- Implemented in Python using standard analytical and infrastructure libraries
-
-## Назначение / Purpose:
-
-Платформа предназначена для исследователей, инженеров и специалистов в области транспортного анализа, которым требуется инструмент для построения, тестирования и внедрения аналитических решений с минимальными затратами на программную реализацию.
-
-The platform is designed for researchers, engineers, and professionals in transportation analytics who need a tool for building, testing, and deploying analytical solutions with minimal software development overhead.
-
-## Примеры использования / Example Use Cases:
-
-- Кластеризация городских районов по паттернам передвижения
-- Обнаружение аномалий в транспортных потоках
-- Выявление подозрительных транзакций в системе оплаты проезда
-- Логистическая оптимизация размещения транспортных хабов
+Платформа не ограничена перечисленными ниже кейсами. Её открытая модульная
+архитектура предназначена для решения **любых формализуемых задач транспортного
+анализа**: новый источник, алгоритм, проверку или формат отчёта можно добавить
+отдельным модулем — вручную или с помощью кодового агента — не переписывая
+остальной pipeline.
 
 ---
 
-- Clustering of urban districts based on mobility patterns
-- Anomaly detection in transportation flows
-- Fraud detection in fare collection systems
-- Logistic optimization for transport hub placement
+## Исследовательский статус и некоммерческое использование
 
+Проект основан на материалах диссертационной работы Марка Валерьевича Булыгина, опубликованных на странице МФТИ: [mipt.ru/institute/departments/dissertatio/soiskateli/tn/bulygin-mark-valerevich](https://mipt.ru/institute/departments/dissertatio/soiskateli/tn/bulygin-mark-valerevich).
 
-**License:** MIT
+Платформа и примеры предназначены для **некоммерческого исследовательского использования**. Если какой-либо набор данных, пример, ссылка или описание должны быть удалены из репозитория, напишите на почту проекта: `messimm@yandex.ru`.
 
-**Author:** [Mark Bulygin]
+---
 
-**Contact:** [messimm@yandex.ru]
+## Что можно делать
+
+| Направление | Примеры задач | Готовые модули |
+| --- | --- | --- |
+| Подключение транспортных данных | Читать CSV/JSON, API `data.mos.ru`, локальные кэши, районное население | `DataLoaders/*` |
+| Контроль качества | Фильтровать пустые районы, невалидные координаты, некорректные значения | `DataCheckers/*` |
+| Аналитика потоков | Аномалии, потенциальный фрод, типология районов, использование метро | `DataAnalyzers/*` |
+| Обеспеченность районов | Объекты/места на 100 тыс. жителей, TOP/BOTTOM районов, уровни обеспеченности | `DistrictObjectProvisionAnalysis` |
+| Отчёты и визуализация | CSV, Excel, текстовые TOP/BOTTOM отчёты, scatter/bar charts, PNG-карты | `DataVisualizers/*` |
+
+---
+
+## Быстрый старт
+
+### 1. Установить зависимости
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Запустить готовый офлайн-пример
+
+```bash
+python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
+```
+
+По умолчанию демонстрационные конфиги используют fixture-данные из `tests/fixtures/`, поэтому их можно запускать без внешней сети. Для актуальных данных замените `data_path` в конфиге на локальную CSV/JSON-выгрузку или настройте доступ к API `data.mos.ru`.
+
+### 3. Скачать данные и получить результат одной командой
+
+Есть два сетевых примера: российский источник `data.mos.ru` и международный
+стандарт GBFS. Оба сначала обращаются к Интернету, а при недоступности источника
+автоматически используют маленький локальный fallback, поэтому команда в любом
+случае завершается созданием результатов. Колонка `_source` показывает, были ли
+использованы актуальные данные (`data.mos.ru_api` / `gbfs_api`) или кэш
+(`fallback_cache`).
+
+#### Россия: открытые данные Москвы
+
+```bash
+python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
+```
+
+Команда обращается к официальному API `data.mos.ru`, скачивает до 1000 строк
+набора платных парковок, нормализует данные, выполняет проверку и сохраняет
+`outputs/online_street_parking_summary.csv`. Если портал требует ключ API,
+передайте его без изменения конфига:
+
+```bash
+DATA_MOS_API_KEY="ваш-ключ" python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
+```
+
+При недоступности `https://apidata.mos.ru` пример автоматически использует
+`tests/fixtures/datamos_rows.json`. Для технической диагностики добавьте
+флаг `--debug` и уберите `fallback_path` из копии конфига.
+
+#### Мир: международный стандарт GBFS
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeStationsOnline.json
+```
+
+Пример читает публичный GBFS `station_information` городской системы Citi Bike,
+проверяет идентификаторы и координаты станций и создаёт:
+
+- `outputs/world_gbfs_bike_stations.csv`;
+- `outputs/world_gbfs_bike_stations_map.png`.
+
+GBFS — открытый международный формат для систем совместной мобильности. Если
+внешний endpoint недоступен из сети пользователя, пример использует
+`tests/fixtures/gbfs_station_information.json` и отмечает это в `_source`.
+
+### 4. Запустить актуальные операционные кейсы
+
+**Дефицит велосипедов и свободных доков:**
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeAvailabilityOnline.json
+```
+
+Алгоритм объединяет статический `station_information` и оперативный
+`station_status`, вычисляет долю доступных велосипедов и индекс дисбаланса,
+после чего выделяет пустые, почти заполненные и недоступные станции.
+
+**Нарушения движения линий метро:**
+
+```bash
+python launch_from_cfg.py Configs/WorldTfLTubeStatusOnline.json
+```
+
+Алгоритм читает TfL Unified API, ранжирует линии по severity и формирует CSV
+плюс текстовую сводку о нарушениях. Оба примера имеют локальный fallback и
+сохраняют результаты в `outputs/`.
+
+**Предложение транспортных услуг по расписанию GTFS:**
+
+```bash
+python launch_from_cfg.py Configs/WorldGTFSServiceSupplyOnline.json
+```
+
+Алгоритм читает стандартный GTFS ZIP, связывает маршруты, рейсы и остановочные
+времена и ранжирует маршруты по числу рейсов, остановок и составному индексу
+предложения.
+
+**Пунктуальность ближайших отправлений:**
+
+```bash
+python launch_from_cfg.py Configs/WorldSwissDeparturePunctualityOnline.json
+```
+
+Алгоритм использует публичное табло швейцарского транспорта, объединяет
+расписание с прогнозом, рассчитывает задержку и классифицирует отправления как
+`on_time`, `delayed` или `unknown`.
+
+### 5. Запустить авиационные, пригородные и ML-кейсы
+
+```bash
+# Географическая кластеризация аэропортов OurAirports
+python launch_from_cfg.py Configs/WorldAirportClusteringOnline.json
+
+# Предложение пригородных поездов (GTFS route_type=2)
+python launch_from_cfg.py Configs/WorldGTFSCommuterRailSupplyOnline.json
+
+# Кластеризация станций по координатам и интенсивности обслуживания
+python launch_from_cfg.py Configs/WorldGTFSStationClusteringOnline.json
+
+# Робастная детекция аномально больших задержек
+python launch_from_cfg.py Configs/WorldSwissDelayAnomaliesOnline.json
+```
+
+Кластеризации используют воспроизводимый `KMeans` с нормализацией признаков.
+Детектор аномалий основан на медиане и MAD, поэтому единичные экстремальные
+задержки меньше искажают базовый уровень, чем при использовании среднего.
+
+Посмотреть все доступные конфиги можно без запуска анализа:
+
+```bash
+python launch_from_cfg.py --list-configs
+```
+
+### 6. Запустить все готовые районные кейсы
+
+```bash
+python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
+python launch_from_cfg.py Configs/DataMosBikeRentalDistrictProvision.json
+python launch_from_cfg.py Configs/DataMosTaxiParkingDistrictProvision.json
+python launch_from_cfg.py Configs/DataMosTransitStopsDistrictProvision.json
+```
+
+Результаты сохраняются в автоматически создаваемую папку `outputs/`: CSV-сводки,
+TOP/BOTTOM-10 отчёты и PNG-карты объектов. Папка не отслеживается Git.
+
+---
+
+## Поддерживаемые источники данных
+
+| Источник | Адаптер | Для чего используется |
+| --- | --- | --- |
+| [Платные парковки на улично-дорожной сети, dataset 623](https://data.mos.ru/opendata/623) | `MoscowStreetParkingLoader` | Геореестр парковок, анализ ёмкости и обеспеченности |
+| [Парковки такси, dataset 621](https://data.mos.ru/opendata/621) | `MoscowTaxiParkingLoader` | Обеспеченность районов стоянками такси |
+| [Прокат велосипедов, dataset 1777](https://data.mos.ru/opendata/1777) | `MoscowBikeRentalLoader` | Обеспеченность районов пунктами велопроката |
+| [Маршруты и остановки НГПТ, dataset 60661](https://data.mos.ru/opendata/60661) | `MoscowTransitStopsRoutesLoader` | Справочные маршрутно-остановочные сценарии |
+| [Citi Bike GBFS station information](https://gbfs.citibikenyc.com/gbfs/en/station_information.json) | `GBFSStationInformationLoader` | Международный пример открытого велошеринга и карта станций |
+| [Citi Bike GBFS station status](https://gbfs.citibikenyc.com/gbfs/en/station_status.json) | `GBFSStationStatusLoader` | Поиск пустых, переполненных и недоступных станций |
+| [TfL Unified API — Tube status](https://api.tfl.gov.uk/Line/Mode/tube/Status) | `TfLLineStatusLoader` | Мониторинг текущих нарушений работы линий метро |
+| [MBTA GTFS](https://cdn.mbta.com/MBTA_GTFS.zip) | `GTFSFeedLoader` | Анализ предложения рейсов и охвата остановок по маршрутам |
+| [Swiss public transport API](https://transport.opendata.ch/v1/stationboard) | `SwissStationboardLoader` | Анализ прогнозных задержек ближайших отправлений |
+| [OurAirports worldwide airport data](https://ourairports.com/data/) | `OurAirportsLoader` | Авиационные реестры и кластеризация аэропортов |
+| CSV/JSON с населением районов | `DistrictPopulationLoader` | Нормировка объектов на 100 тыс. жителей |
+| Локальные валидаторные/мобильные данные | `MetroDataLoader`, `MobileOperatorsLoader` | Аномалии, фрод, кластеризация, использование метро |
+
+Подробности: [`DataLoaders/README.md`](DataLoaders/README.md), [`DataLoaders/DATAMOS.md`](DataLoaders/DATAMOS.md).
+
+---
+
+## Решённые кейсы
+
+| Кейc | Конфиг | Что получается | Документация |
+| --- | --- | --- | --- |
+| Обеспеченность районов платными парковками | `Configs/DataMosStreetParkingDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание](docs/SOLVED_TASKS.md#обеспеченность-районов-платными-парковками) |
+| Обеспеченность районов пунктами велопроката | `Configs/DataMosBikeRentalDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание](docs/SOLVED_TASKS.md#обеспеченность-районов-пунктами-велопроката) |
+| Обеспеченность районов стоянками такси | `Configs/DataMosTaxiParkingDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание](docs/SOLVED_TASKS.md#обеспеченность-районов-стоянками-такси) |
+| Обеспеченность районов остановками/маршрутами НГПТ | `Configs/DataMosTransitStopsDistrictProvision.json` | CSV-сводка, TOP/BOTTOM-10, PNG-карта | [описание](docs/SOLVED_TASKS.md#обеспеченность-районов-остановками-и-маршрутными-записями-нгпт) |
+| Сводная проверка набора платных парковок | `Configs/DataMosStreetParking.json` | Табличная проверка структуры и совместимости | [описание](docs/SOLVED_TASKS.md#сводная-проверка-набора-платных-парковок) |
+| Online-проверка актуальных парковок | `Configs/DataMosStreetParkingOnline.json` | Автоматическая загрузка из API и CSV-сводка | [описание](docs/SOLVED_TASKS.md#online-проверка-актуального-набора-парковок) |
+| Международный пример велошеринга GBFS | `Configs/WorldGBFSBikeStationsOnline.json` | Online-загрузка, CSV и PNG-карта | [описание](docs/SOLVED_TASKS.md#международный-online-пример-gbfs) |
+| Дисбаланс велошеринга | `Configs/WorldGBFSBikeAvailabilityOnline.json` | Рейтинг проблемных станций, CSV и PNG-карта | [описание](docs/SOLVED_TASKS.md#поиск-дисбаланса-велошеринга) |
+| Нарушения движения метро TfL | `Configs/WorldTfLTubeStatusOnline.json` | Рейтинг линий, CSV и текстовая сводка | [описание](docs/SOLVED_TASKS.md#мониторинг-нарушений-движения-tfl) |
+| Предложение маршрутов GTFS | `Configs/WorldGTFSServiceSupplyOnline.json` | Рейтинг маршрутов, CSV и текстовый отчёт | [описание](docs/SOLVED_TASKS.md#анализ-предложения-по-gtfs) |
+| Пунктуальность отправлений | `Configs/WorldSwissDeparturePunctualityOnline.json` | Рейтинг задержек, CSV и текстовый отчёт | [описание](docs/SOLVED_TASKS.md#пунктуальность-ближайших-отправлений) |
+| Кластеризация аэропортов | `Configs/WorldAirportClusteringOnline.json` | CSV кластеров и PNG-карта | [описание](docs/SOLVED_TASKS.md#кластеризация-аэропортов) |
+| Предложение пригородных поездов | `Configs/WorldGTFSCommuterRailSupplyOnline.json` | Рейтинг маршрутов, CSV и TXT | [описание](docs/SOLVED_TASKS.md#предложение-пригородных-поездов) |
+| Кластеризация станций | `Configs/WorldGTFSStationClusteringOnline.json` | Кластеры по географии и обслуживанию, CSV и PNG | [описание](docs/SOLVED_TASKS.md#кластеризация-станций-gtfs) |
+| Аномалии задержек | `Configs/WorldSwissDelayAnomaliesOnline.json` | Робастные anomaly scores, CSV и TXT | [описание](docs/SOLVED_TASKS.md#аномалии-задержек) |
+
+Полная страница кейсов: [`docs/SOLVED_TASKS.md`](docs/SOLVED_TASKS.md).
+
+---
+
+## Как устроен pipeline
+
+Конфигурация собирает четыре группы модулей:
+
+```json
+{
+  "DataLoaders": [{"Name": "...", "Parameters": {}}],
+  "DataCheckers": [{"Name": "...", "Parameters": {}}],
+  "DataAnalyzers": [{"Name": "...", "Parameters": {}}],
+  "DataVisualizers": [{"Name": "...", "Parameters": {}}]
+}
+```
+
+`launch_from_cfg.py` импортирует классы по имени, создаёт загрузчики/проверки/анализатор/визуализаторы и передаёт результат анализа в визуализаторы. Один анализатор может вернуть один результат или список результатов; число визуализаторов должно совпадать с числом результатов.
+
+### Основные принципы
+
+- **Конфигурация вместо склейки кода:** готовый сценарий описывается одним JSON-файлом.
+- **Единый табличный контракт:** загрузчики нормализуют источники в `pandas.DataFrame`.
+- **Разделение ответственности:** чтение, проверка, анализ и представление результата находятся в разных модулях.
+- **Воспроизводимость:** демонстрационные конфиги работают на маленьких локальных fixtures без сети.
+- **Расширяемость:** новый источник или отчёт добавляется отдельным классом и подключается по имени в конфиге.
+- **Agent-friendly разработка:** специалист может описать новую транспортную
+  задачу на профессиональном языке, а агент добавит недостающие модули, тесты,
+  конфиг и документацию по правилам `AGENTS.md`.
+
+### Проверка установки
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+---
+
+## Для кодовых агентов: Codex, Claude Code и другие
+
+Если вы специалист по транспорту и хотите использовать кодового агента, можно дать ему ссылку на репозиторий и сформулировать задачу на профессиональном языке. Для агентов добавлены отдельные инструкции:
+
+- [`AGENTS.md`](AGENTS.md) — краткая карта репозитория, правила изменения кода и типовые маршруты работы.
+- [`docs/AGENT_GUIDE.md`](docs/AGENT_GUIDE.md) — как переводить транспортную постановку задачи в модули платформы.
+
+Примеры запросов к агенту:
+
+```text
+Добавь кейс обеспеченности районов зарядными станциями: нужен loader для нового CSV, фильтр координат, расчёт объектов на 100 тыс. жителей, TOP-10 отчёт и PNG-карта.
+```
+
+```text
+Проверь, совместим ли новый набор data.mos.ru с DistrictObjectProvisionAnalysis. Если нет — добавь адаптер и конфиг запуска.
+```
+
+```text
+Собери pipeline для анализа аномалий пассажиропотока по валидаторным данным и сохрани отчёт в CSV.
+```
+
+---
+
+## Документация по модулям
+
+| Раздел | Документ |
+| --- | --- |
+| Загрузчики данных | [`DataLoaders/README.md`](DataLoaders/README.md) |
+| Наборы `data.mos.ru` | [`DataLoaders/DATAMOS.md`](DataLoaders/DATAMOS.md) |
+| Проверки и фильтры | [`DataCheckers/README.md`](DataCheckers/README.md) |
+| Аналитические модули | [`DataAnalyzers/Readme.md`](DataAnalyzers/Readme.md) |
+| Визуализаторы | [`DataVisualizers/README.md`](DataVisualizers/README.md) |
+| Решённые задачи | [`docs/SOLVED_TASKS.md`](docs/SOLVED_TASKS.md) |
+| Руководство для агентов | [`docs/AGENT_GUIDE.md`](docs/AGENT_GUIDE.md) |
+| Видимость в поиске и GitHub Topics | [`docs/DISCOVERY.md`](docs/DISCOVERY.md) |
+
+---
+
+## English summary
+
+**OpenTransportDataPlatform** is a modular open-source platform for transport data analysis. It supports reusable loaders, checkers, analyzers and visualizers, including adapters for Moscow `data.mos.ru` datasets and district-level provision workflows. The project is intended for non-commercial research use and is based on dissertation materials by Mark Valerievich Bulygin published on the MIPT website.
+
+If any dataset, example, link or description should be removed, please contact `messimm@yandex.ru`.
+
+**License:** MIT  
+**Author:** Mark Bulygin  
+**Contact:** messimm@yandex.ru
+
+**Search keywords:** transport data analysis, urban mobility, public transport
+analytics, mobility analysis, geospatial open data, Moscow transport,
+`data.mos.ru`, транспортная аналитика, городская мобильность, транспортные
+данные, пассажиропоток, обеспеченность транспортной инфраструктурой.

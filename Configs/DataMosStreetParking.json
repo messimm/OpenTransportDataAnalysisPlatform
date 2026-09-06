@@ -1,0 +1,35 @@
+{
+  "DataLoaders": [
+    {
+      "Name": "MoscowStreetParkingLoader",
+      "Parameters": {
+        "rows_limit": 1000,
+        "data_path": "tests/fixtures/datamos_rows.json"
+      }
+    }
+  ],
+  "DataCheckers": [
+    {
+      "Name": "DataMosGeoChecker",
+      "Parameters": {
+        "require_coordinates": true
+      }
+    }
+  ],
+  "DataAnalyzers": [
+    {
+      "Name": "GenericDatasetSummaryAnalysis",
+      "Parameters": {
+        "group_column": "capacity"
+      }
+    }
+  ],
+  "DataVisualizers": [
+    {
+      "Name": "DataFrameToCsvVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/street_parking_summary.csv"
+      }
+    }
+  ]
+}

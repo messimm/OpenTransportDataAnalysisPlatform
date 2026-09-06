@@ -1,0 +1,46 @@
+{
+  "DataLoaders": [
+    {
+      "Name": "GBFSStationInformationLoader",
+      "Parameters": {
+        "url": "https://gbfs.citibikenyc.com/gbfs/en/station_information.json",
+        "fallback_path": "tests/fixtures/gbfs_station_information.json",
+        "rows_limit": 5000,
+        "timeout": 30
+      }
+    }
+  ],
+  "DataCheckers": [
+    {
+      "Name": "DataFrameColumnFilterChecker",
+      "Parameters": {
+        "not_empty": ["station_id", "name"],
+        "ranges": {
+          "latitude": {"min": -90, "max": 90},
+          "longitude": {"min": -180, "max": 180}
+        }
+      }
+    }
+  ],
+  "DataAnalyzers": [
+    {
+      "Name": "GeoObjectInventoryAnalysis",
+      "Parameters": {}
+    }
+  ],
+  "DataVisualizers": [
+    {
+      "Name": "DataFrameToCsvVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/world_gbfs_bike_stations.csv"
+      }
+    },
+    {
+      "Name": "GeoPointMapVisualizer",
+      "Parameters": {
+        "path_to_save": "outputs/world_gbfs_bike_stations_map.png",
+        "title": "Citi Bike stations (GBFS)"
+      }
+    }
+  ]
+}
