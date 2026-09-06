@@ -79,14 +79,6 @@ class DistrictObjectProvisionAnalysis(BasicDataAnalysisModule):
         result["provision_level"] = "medium"
         result.loc[result[metric] <= low_threshold, "provision_level"] = "low"
         result.loc[result[metric] >= high_threshold, "provision_level"] = "high"
-        if self.low_threshold is None:
-            self.low_threshold = result[metric].quantile(0.25)
-        if self.high_threshold is None:
-            self.high_threshold = result[metric].quantile(0.75)
-
-        result["provision_level"] = "medium"
-        result.loc[result[metric] <= self.low_threshold, "provision_level"] = "low"
-        result.loc[result[metric] >= self.high_threshold, "provision_level"] = "high"
         result["object_type"] = self.object_name
         result = result.sort_values(metric)
 

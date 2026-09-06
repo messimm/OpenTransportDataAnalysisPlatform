@@ -23,6 +23,7 @@
 | `MetroDataLoader.py` | `MetroDataLoader` | Локальные данные валидаторов/проходов метро. |
 | `MobileLoaders.py` | `MobileOperatorsLoader` | Локальные агрегаты мобильных операторов по зонам отправления/прибытия. |
 | `DataMosLoaders.py` | `DataMosDatasetLoader` и производные классы | Открытые транспортные наборы портала `data.mos.ru`. |
+| `GBFSDataLoader.py` | `GBFSStationInformationLoader` | Международные открытые данные вело- и микромобильности в формате GBFS. |
 
 ## Адаптеры `data.mos.ru`
 
@@ -48,6 +49,7 @@
 | `columns_map` | Нет | Дополнительное переименование колонок источника в нормализованные имена платформы. |
 | `sep` | Нет | Разделитель для CSV-кэша. По умолчанию `;`. |
 | `timeout` | Нет | Таймаут HTTP-запроса к API в секундах. |
+| `fallback_path` | Нет | Локальный JSON-кэш, используемый автоматически при недоступности API. |
 
 ### Пример конфигурации pipeline
 
@@ -55,7 +57,6 @@
 fixture набора платных парковок через геопроверку, сводный анализатор и CSV-визуализатор.
 Результат сохраняется в `outputs/street_parking_summary.csv`. Для расширенных задач
 обеспеченности используются CSV-отчёты и PNG-карты:
-Готовый пример находится в `Configs/DataMosStreetParking.json` и запускает набор платных парковок через геопроверку, сводный анализатор и табличный визуализатор. Для расширенных задач обеспеченности используются CSV-отчёты и PNG-карты:
 
 ```bash
 python launch_from_cfg.py Configs/DataMosStreetParking.json
@@ -67,8 +68,17 @@ Online-пример, который сам обращается к `https://apid
 python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
 ```
 
+Международный пример на открытом формате GBFS:
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeStationsOnline.json
+```
+
+Оба online-конфига содержат `fallback_path`, поэтому подходят для сетей с proxy
+или временно недоступным внешним API. Происхождение каждой строки записывается в
+служебную колонку `_source`.
+
 Если окружение не имеет доступа к `apidata.mos.ru`, скачайте CSV/JSON с карточки набора данных и укажите путь в параметре `data_path`:
-Если окружение не имеет доступа к `api.data.mos.ru`, скачайте CSV/JSON с карточки набора данных и укажите путь в параметре `data_path`:
 
 ```json
 {

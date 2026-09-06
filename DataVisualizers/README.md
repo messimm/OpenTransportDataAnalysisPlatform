@@ -8,6 +8,7 @@
 | `ScatterVisualizer.py` | `ScatterPlotVisualizer` | Строит scatter plot для данных с колонками `x`, `y`, `color`. |
 | `MetroUsageVisualizer.py` | `TextReportMetroUsageVisualizer` | Формирует текстовый отчёт по использованию метро. |
 | `DistrictProvisionVisualizer.py` | `DistrictProvisionBarVisualizer` | Строит столбчатую диаграмму обеспеченности районов объектами. |
+| `GeoPointMapVisualizer.py` | `GeoPointMapVisualizer` | Строит универсальную PNG-карту объектов по широте и долготе. |
 
 ## `DistrictProvisionBarVisualizer`
 

@@ -5,12 +5,14 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pandas as pd
+import requests
 
 from DataAnalyzers.DistrictProvisionAnalyzer import DistrictObjectProvisionAnalysis
 from DataCheckers.DataFrameFilterChecker import DataFrameColumnFilterChecker
 from DataCheckers.DataMosChecker import DataMosGeoChecker
 from DataLoaders.DataMosLoaders import MoscowStreetParkingLoader
 from DataLoaders.DistrictDataLoaders import DistrictPopulationLoader
+from DataLoaders.GBFSDataLoader import GBFSStationInformationLoader
 from DataVisualizers.DataFrameToCsvVisualizer import DataFrameToCsvVisualizer
 from launch_from_cfg import load_config, pipeline_from_config
 
@@ -19,6 +21,35 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 
 class PlatformTests(unittest.TestCase):
+    @patch("DataLoaders.GBFSDataLoader.requests.get")
+    def test_gbfs_online_config_downloads_and_writes_csv_and_map(self, get):
+        response = get.return_value
+        response.raise_for_status.return_value = None
+        response.json.return_value = json.loads(
+            (FIXTURES / "gbfs_station_information.json").read_text(encoding="utf-8")
+        )
+        config = load_config("Configs/WorldGBFSBikeStationsOnline.json")
+        with tempfile.TemporaryDirectory() as directory:
+            for visualizer in config["DataVisualizers"]:
+                visualizer["Parameters"]["path_to_save"] = str(
+                    Path(directory) / Path(visualizer["Parameters"]["path_to_save"]).name
+                )
+            pipeline_from_config(config)
+            self.assertTrue((Path(directory) / "world_gbfs_bike_stations.csv").is_file())
+            self.assertTrue((Path(directory) / "world_gbfs_bike_stations_map.png").is_file())
+
+    @patch("DataLoaders.GBFSDataLoader.requests.get")
+    def test_gbfs_loader_falls_back_when_network_is_unavailable(self, get):
+        get.side_effect = requests.ConnectionError("offline")
+        loader = GBFSStationInformationLoader(
+            {
+                "url": "https://example.invalid/station_information.json",
+                "fallback_path": str(FIXTURES / "gbfs_station_information.json"),
+            }
+        )
+        self.assertEqual(loader.source, "fallback_cache")
+        self.assertEqual(len(loader.getAllData()), 3)
+
     @patch("DataLoaders.DataMosLoaders.requests.get")
     def test_online_loader_uses_data_mos_api_and_normalizes_geojson(self, get):
         response = get.return_value

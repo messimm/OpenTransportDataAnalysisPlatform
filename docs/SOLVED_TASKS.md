@@ -14,6 +14,7 @@
 | [Обеспеченность районов остановками и маршрутными записями НГПТ](#обеспеченность-районов-остановками-и-маршрутными-записями-нгпт) | `data.mos.ru` dataset 60661 + население районов | `Configs/DataMosTransitStopsDistrictProvision.json` | `DataLoaders/DATAMOS.md`, `DataAnalyzers/Readme.md` | CSV-сводка, TOP/BOTTOM-10 отчёт, PNG-карта объектов |
 | [Сводная проверка набора платных парковок](#сводная-проверка-набора-платных-парковок) | `data.mos.ru` dataset 623 | `Configs/DataMosStreetParking.json` | `DataAnalyzers/Readme.md` | Табличная сводка качества и совместимости |
 | [Online-проверка актуального набора парковок](#online-проверка-актуального-набора-парковок) | API `data.mos.ru`, dataset 623 | `Configs/DataMosStreetParkingOnline.json` | `DataLoaders/README.md` | Автоматическая загрузка и CSV-сводка |
+| [Международный online-пример GBFS](#международный-online-пример-gbfs) | Публичный GBFS Citi Bike | `Configs/WorldGBFSBikeStationsOnline.json` | `DataLoaders/README.md` | CSV станций и PNG-карта |
 
 ## Общий исследовательский pipeline для кейсов обеспеченности
 
@@ -51,11 +52,6 @@ python launch_from_cfg.py Configs/DataMosStreetParkingDistrictProvision.json
 - `outputs/street_parking_district_provision_top10_top.csv` — самые обеспеченные районы;
 - `outputs/street_parking_district_provision_top10_bottom.csv` — наименее обеспеченные районы;
 - `outputs/street_parking_district_provision_map.png` — PNG-карта объектов.
-- `street_parking_district_provision_summary.csv` — районная сводка;
-- `street_parking_district_provision_top10_report.txt` — текстовый TOP/BOTTOM-10;
-- `street_parking_district_provision_top10_top.csv` — самые обеспеченные районы;
-- `street_parking_district_provision_top10_bottom.csv` — наименее обеспеченные районы;
-- `street_parking_district_provision_map.png` — PNG-карта объектов.
 
 ## Обеспеченность районов пунктами велопроката
 
@@ -76,11 +72,6 @@ python launch_from_cfg.py Configs/DataMosBikeRentalDistrictProvision.json
 - `outputs/bike_rental_district_provision_top10_top.csv`;
 - `outputs/bike_rental_district_provision_top10_bottom.csv`;
 - `outputs/bike_rental_district_provision_map.png`.
-- `bike_rental_district_provision_summary.csv`;
-- `bike_rental_district_provision_top10_report.txt`;
-- `bike_rental_district_provision_top10_top.csv`;
-- `bike_rental_district_provision_top10_bottom.csv`;
-- `bike_rental_district_provision_map.png`.
 
 ## Обеспеченность районов стоянками такси
 
@@ -101,11 +92,6 @@ python launch_from_cfg.py Configs/DataMosTaxiParkingDistrictProvision.json
 - `outputs/taxi_parking_district_provision_top10_top.csv`;
 - `outputs/taxi_parking_district_provision_top10_bottom.csv`;
 - `outputs/taxi_parking_district_provision_map.png`.
-- `taxi_parking_district_provision_summary.csv`;
-- `taxi_parking_district_provision_top10_report.txt`;
-- `taxi_parking_district_provision_top10_top.csv`;
-- `taxi_parking_district_provision_top10_bottom.csv`;
-- `taxi_parking_district_provision_map.png`.
 
 ## Обеспеченность районов остановками и маршрутными записями НГПТ
 
@@ -128,11 +114,6 @@ python launch_from_cfg.py Configs/DataMosTransitStopsDistrictProvision.json
 - `outputs/transit_stops_district_provision_top10_top.csv`;
 - `outputs/transit_stops_district_provision_top10_bottom.csv`;
 - `outputs/transit_stops_district_provision_map.png`.
-- `transit_stops_district_provision_summary.csv`;
-- `transit_stops_district_provision_top10_report.txt`;
-- `transit_stops_district_provision_top10_top.csv`;
-- `transit_stops_district_provision_top10_bottom.csv`;
-- `transit_stops_district_provision_map.png`.
 
 ## Сводная проверка набора платных парковок
 
@@ -162,8 +143,28 @@ python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
 DATA_MOS_API_KEY="ваш-ключ" python launch_from_cfg.py Configs/DataMosStreetParkingOnline.json
 ```
 
-Пример зависит от доступности внешнего портала. Все районные примеры выше
-остаются офлайн-воспроизводимыми благодаря fixtures.
+При недоступности внешнего портала пример автоматически переключается на
+`tests/fixtures/datamos_rows.json`. В поле `_source` будет указано
+`fallback_cache`, а при успешной загрузке — `data.mos.ru_api`.
+
+## Международный online-пример GBFS
+
+Для пользователей за пределами России добавлен пример на международном открытом
+стандарте GBFS (General Bikeshare Feed Specification):
+
+```bash
+python launch_from_cfg.py Configs/WorldGBFSBikeStationsOnline.json
+```
+
+Pipeline загружает справочник станций Citi Bike, проверяет обязательные поля и
+диапазоны координат, а затем сохраняет таблицу и PNG-карту:
+
+- `outputs/world_gbfs_bike_stations.csv`;
+- `outputs/world_gbfs_bike_stations_map.png`.
+
+Если endpoint заблокирован proxy или временно недоступен, используется небольшой
+локальный GBFS fixture. Значение `_source=gbfs_api` означает успешную загрузку из
+Интернета, `_source=fallback_cache` — использование локального примера.
 
 ---
 

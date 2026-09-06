@@ -5,7 +5,8 @@
       "Parameters": {
         "rows_limit": 1000,
         "api_key_env": "DATA_MOS_API_KEY",
-        "timeout": 30
+        "timeout": 30,
+        "fallback_path": "tests/fixtures/datamos_rows.json"
       }
     }
   ],

@@ -41,9 +41,6 @@ class DistrictPopulationLoader(BasicDataLoaderModule):
         self.data_frame = self.data_frame.dropna(subset=["district", "population"])
         self.data_frame = self.data_frame[self.data_frame["district"] != ""]
         self.data_frame = self.data_frame.groupby("district", as_index=False)["population"].sum()
-        self.data_frame["district"] = self.data_frame["district"].astype(str).str.strip()
-        self.data_frame["population"] = pd.to_numeric(self.data_frame["population"], errors="coerce")
-        self.data_frame = self.data_frame.dropna(subset=["district", "population"])
 
     def labelCenter(self, center):
         return self.data_frame[self.data_frame["district"] == center]

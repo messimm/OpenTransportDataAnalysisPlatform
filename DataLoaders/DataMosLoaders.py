@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import warnings
 from typing import Any, Dict, Iterable, Optional
 
 import pandas as pd
@@ -35,7 +36,6 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
     """
 
     API_URL = "https://apidata.mos.ru/v1/datasets/{dataset_id}/rows"
-    API_URL = "https://api.data.mos.ru/v1/datasets/{dataset_id}/rows"
 
     dataset_id: Optional[int] = None
     default_columns_map: Dict[str, str] = {}
@@ -51,25 +51,38 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
 
         self.rows_limit = int(self.cfg.get("rows_limit", 5000))
         self.columns_map = {**self.default_columns_map, **self.cfg.get("columns_map", {})}
+        self.source = None
         self.data_frame = self._load_dataframe()
+        self.data_frame["_source"] = self.source
         self._normalize_dataframe()
         self._init_centers()
 
     def _load_dataframe(self) -> pd.DataFrame:
         data_path = self.cfg.get("data_path")
         if data_path:
+            self.source = "local_file"
             return self._read_local(data_path)
-        return self._download_from_api()
+        try:
+            data = self._download_from_api()
+            self.source = "data.mos.ru_api"
+            return data
+        except DataMosApiError:
+            fallback_path = self.cfg.get("fallback_path")
+            if not fallback_path:
+                raise
+            warnings.warn(
+                f"data.mos.ru API is unavailable; using fallback cache: {fallback_path}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            self.source = "fallback_cache"
+            return self._read_local(fallback_path)
 
     def _read_local(self, data_path: str) -> pd.DataFrame:
         if str(data_path).lower().endswith(".json"):
             with open(data_path, "r", encoding="utf-8") as f:
                 payload = json.load(f)
             return self._rows_to_frame(payload).head(self.rows_limit)
-        if data_path.endswith(".json"):
-            with open(data_path, "r", encoding="utf-8") as f:
-                payload = json.load(f)
-            return self._rows_to_frame(payload)
         return pd.read_csv(data_path, sep=self.cfg.get("sep", ";"), nrows=self.rows_limit)
 
     def _download_from_api(self) -> pd.DataFrame:
@@ -80,19 +93,16 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
         if api_key:
             params["api_key"] = api_key
         url = self.cfg.get("api_url", self.API_URL).format(dataset_id=self.dataset_id)
-        api_key = self.cfg.get("api_key")
-        if api_key:
-            params["api_key"] = api_key
-        url = self.API_URL.format(dataset_id=self.dataset_id)
         try:
             response = requests.get(url, params=params, timeout=self.cfg.get("timeout", 20))
             response.raise_for_status()
-        except requests.RequestException as exc:
+            payload = response.json()
+        except (requests.RequestException, ValueError) as exc:
             raise DataMosApiError(
                 f"Cannot load data.mos.ru dataset {self.dataset_id}. "
                 "Provide a local data_path cache or check network/API access."
             ) from exc
-        return self._rows_to_frame(response.json())
+        return self._rows_to_frame(payload)
 
     def _rows_to_frame(self, payload: Any) -> pd.DataFrame:
         records = []
@@ -103,7 +113,6 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
         else:
             raise ValueError("Unsupported data.mos.ru JSON payload: expected list or object")
         for row in rows:
-        for row in payload if isinstance(payload, list) else payload.get("Items", []):
             cells = row.get("Cells", row) if isinstance(row, dict) else row
             if isinstance(cells, dict):
                 records.append(cells)
@@ -186,10 +195,6 @@ class DataMosDatasetLoader(BasicDataLoaderModule):
             )
             if api_key:
                 params["api_key"] = api_key
-            url = self.API_URL.format(dataset_id=self.dataset_id)
-            params = {"$top": 1}
-            if self.cfg.get("api_key"):
-                params["api_key"] = self.cfg["api_key"]
             response = requests.get(url, params=params, timeout=self.cfg.get("timeout", 10))
             return response.ok
         except requests.RequestException:
