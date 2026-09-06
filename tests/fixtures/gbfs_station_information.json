@@ -1,0 +1,12 @@
+{
+  "last_updated": 1720000000,
+  "ttl": 60,
+  "version": "2.3",
+  "data": {
+    "stations": [
+      {"station_id": "demo-1", "name": "Demo station 1", "lat": 40.7306, "lon": -73.9866, "capacity": 25},
+      {"station_id": "demo-2", "name": "Demo station 2", "lat": 40.7411, "lon": -73.9897, "capacity": 31},
+      {"station_id": "demo-3", "name": "Demo station 3", "lat": 40.7527, "lon": -73.9772, "capacity": 19}
+    ]
+  }
+}

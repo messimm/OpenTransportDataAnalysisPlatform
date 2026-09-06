@@ -1,0 +1,5 @@
+[
+  {"Cells": {"ParkingName": "Парковка 1", "ParkingNumber": "P1", "Address": "Москва", "District": "Тверской район", "CarCapacity": 10, "Latitude_WGS84": "55.76", "Longitude_WGS84": "37.61"}},
+  {"Cells": {"ParkingName": "Парковка 2", "ParkingNumber": "P2", "Address": "Москва", "District": "Пресненский район", "CarCapacity": 20, "Latitude_WGS84": "55.75", "Longitude_WGS84": "37.56"}},
+  {"Cells": {"ParkingName": "Парковка 3", "ParkingNumber": "P3", "Address": "Москва", "District": "Пресненский район", "CarCapacity": 15, "Latitude_WGS84": "55.76", "Longitude_WGS84": "37.57"}}
+]
